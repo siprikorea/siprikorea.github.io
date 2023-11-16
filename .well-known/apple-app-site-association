@@ -1,0 +1,13 @@
+{
+    "applinks":
+    {
+        "apps": [],
+        "details":
+        [
+            {
+                "appID": "BN4D26VM76.com.initech.INIHuB",
+                "paths": ["/*"]
+            }
+        ]
+    }
+}
