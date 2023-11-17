@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.initech.inihubapp",
+    "sha256_cert_fingerprints":
+    ["8C:B2:58:83:F0:D1:20:BC:86:7B:F8:9A:A2:B5:D3:53:0C:59:99:22:E7:4F:1D:2B:71:D9:B9:98:F8:5C:14:73"]
+  }
+}]
