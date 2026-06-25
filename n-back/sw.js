@@ -1,5 +1,5 @@
 // Simple app-shell service worker for the Dual N-Back PWA.
-const CACHE = 'dnb-e159500b1741';
+const CACHE = 'dnb-b76ec9a2e674';
 self.addEventListener('install', (e) => {
   self.skipWaiting();
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['./', './index.html'])).catch(() => {}));
