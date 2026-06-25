@@ -1,0 +1,31 @@
+{
+  "name": "Dual N-Back",
+  "short_name": "N-Back",
+  "description": "Brain training game to improve memory",
+  "start_url": "/n-back/",
+  "scope": "/n-back/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#7AABDF",
+  "theme_color": "#7AABDF",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
