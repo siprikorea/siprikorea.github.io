@@ -1,6 +1,6 @@
 // App-shell service worker for the Dual N-Back PWA. The cache name carries
 // the build version so each deploy is a new SW that supersedes the old one.
-const CACHE = 'dnb-af57c769da7f';
+const CACHE = 'dnb-f0c16360c3b1';
 self.addEventListener('install', (e) => {
   self.skipWaiting();
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['./', './index.html'])).catch(() => {}));
