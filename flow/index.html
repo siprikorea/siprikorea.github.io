@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flow — Visual Dataflow Editor</title>
+  <meta name="description" content="Flow is a visual, node-based dataflow editor. Build data pipelines by wiring modules together — no code required.">
+  <link rel="icon" href="appicon.png">
+  <style>
+    :root {
+      --bg: #0b0d12;
+      --panel: #12151c;
+      --card: #171b24;
+      --border: #262b38;
+      --text: #e8eaf0;
+      --dim: #8a90a2;
+      --accent: #5b8cff;
+      --accent-soft: #7aa1ff;
+      --green: #2b7a5c;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    a { color: inherit; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+    header.top {
+      border-bottom: 1px solid var(--border);
+      background: rgba(11,13,18,.85);
+      backdrop-filter: blur(8px);
+      position: sticky; top: 0; z-index: 10;
+    }
+    header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; text-decoration: none; }
+    .brand img { width: 28px; height: 28px; border-radius: 7px; }
+    .hero { padding: 72px 0 40px; text-align: center; }
+    .hero h1 { font-size: 40px; margin: 0 0 14px; letter-spacing: -0.02em; }
+    .hero p.tagline { font-size: 17px; color: var(--dim); max-width: 560px; margin: 0 auto 30px; line-height: 1.6; }
+
+    .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 8px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 24px; border-radius: 10px; font-weight: 700; font-size: 14.5px;
+      text-decoration: none; border: 1px solid transparent;
+    }
+    .btn.primary { background: var(--accent); color: #fff; }
+    .btn.primary:hover { background: var(--accent-soft); }
+    .btn.secondary { background: transparent; color: var(--text); border-color: var(--border); }
+    .btn.secondary:hover { border-color: var(--accent); }
+    .platform-note { font-size: 12.5px; color: var(--dim); margin: 14px 0 0; }
+
+    .shot-wrap { padding: 12px 0 64px; }
+    .shot-frame {
+      border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+      box-shadow: 0 30px 80px -30px rgba(0,0,0,.6);
+    }
+    .shot-frame img { display: block; width: 100%; height: auto; }
+
+    section.features { padding: 8px 0 72px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 20px 20px 22px;
+    }
+    .card h3 { margin: 0 0 8px; font-size: 15px; }
+    .card p { margin: 0; font-size: 13.5px; color: var(--dim); line-height: 1.55; }
+    .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-right: 8px; }
+
+    section.modules { padding: 0 0 80px; }
+    section.modules h2 { font-size: 20px; margin: 0 0 6px; }
+    section.modules p.sub { color: var(--dim); font-size: 14px; margin: 0 0 22px; }
+    .mods { display: flex; flex-wrap: wrap; gap: 10px; }
+    .mod-pill {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 999px;
+      padding: 8px 16px; font-size: 13px; color: var(--text);
+    }
+    .mod-pill b { color: var(--accent-soft); }
+
+    footer { border-top: 1px solid var(--border); padding: 28px 0; }
+    footer .wrap { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    footer .links { display: flex; gap: 18px; font-size: 13px; }
+    footer .links a { color: var(--dim); text-decoration: none; }
+    footer .links a:hover { color: var(--text); }
+
+    @media (max-width: 720px) {
+      .grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="index.html"><img src="appicon.png" alt=""> Flow</a>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="wrap">
+      <h1>Build data pipelines visually.</h1>
+      <p class="tagline">
+        Flow is a node-based dataflow editor — drag modules onto a canvas, wire them together,
+        and run the pipeline. Transform, encrypt, hash, merge, and split data without writing code.
+      </p>
+      <div class="cta-row">
+        <a class="btn primary" href="https://github.com/siprikorea/flow/releases/latest">
+          ⬇ Download for macOS
+        </a>
+        <a class="btn secondary" href="https://github.com/siprikorea/flow/releases">All releases</a>
+      </div>
+      <p class="platform-note">Free, and built with Kotlin Multiplatform. Windows &amp; Linux coming soon.</p>
+    </div>
+  </div>
+
+  <div class="shot-wrap wrap">
+    <div class="shot-frame">
+      <img src="hero.png" alt="Flow canvas: Input and Key feed a Crypto module, Input also feeds a Hash module, and both outputs merge into Output">
+    </div>
+  </div>
+
+  <section class="features wrap">
+    <div class="grid">
+      <div class="card">
+        <h3><span class="dot"></span>Visual canvas</h3>
+        <p>Drop modules on an infinite canvas and connect their ports. Watch data travel the wires as your pipeline runs.</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot"></span>Extensible</h3>
+        <p>Write your own module as a small JAR and install it — no rebuild of the app required.</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot"></span>Byte-accurate</h3>
+        <p>Ports carry raw bytes, with hex and string editors built in, so binary data stays intact end to end.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="modules wrap">
+    <h2>Built in</h2>
+    <p class="sub">Six modules ship with Flow out of the box.</p>
+    <div class="mods">
+      <span class="mod-pill"><b>Crypto</b> — AES / DES / 3DES / Blowfish, selectable mode &amp; padding</span>
+      <span class="mod-pill"><b>Hash</b> — MD5 / SHA-1 / SHA-256 / SHA-512</span>
+      <span class="mod-pill"><b>Base64</b> — encode / decode</span>
+      <span class="mod-pill"><b>Merge</b></span>
+      <span class="mod-pill"><b>Split</b></span>
+      <span class="mod-pill"><b>Sleep</b></span>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <span style="color:var(--dim); font-size:13px;">Flow</span>
+      <div class="links">
+        <a href="https://github.com/siprikorea/flow">GitHub</a>
+        <a href="https://github.com/siprikorea/flow/releases">Releases</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
