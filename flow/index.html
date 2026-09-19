@@ -223,6 +223,90 @@
       .pg-cat { grid-column: 1 / -1; }
       .pg-canvas { height: 400px; }
     }
+
+    /* ── hero: the whole thing, acted out ─────────────────── */
+    .hf {
+      position: relative; overflow: hidden; border: 1px solid var(--border); border-radius: 12px;
+      box-shadow: 0 24px 60px -30px rgba(0,0,0,.6); background: var(--panel);
+    }
+    .hf-stage { position: absolute; top: 0; left: 0; width: 940px; height: 430px; transform-origin: top left; }
+
+    .hf-bar { position: absolute; top: 0; left: 0; right: 0; height: 40px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 12px; gap: 9px; background: var(--panel); }
+    .hf-bar .hf-dots { display: flex; gap: 6px; margin-right: 6px; }
+    .hf-bar .hf-dots i { width: 9px; height: 9px; border-radius: 50%; background: #2a3040; display: block; }
+    .hf-bar .hf-title { font-size: 12.5px; font-weight: 600; }
+    .hf-start { margin-left: auto; background: var(--accent); color: #fff; font-size: 11.5px; font-weight: 700;
+      border-radius: 7px; padding: 5px 12px; transition: transform .12s, filter .12s; }
+    .hf-start.press { transform: scale(.94); filter: brightness(1.25); }
+
+    .hf-panel { position: absolute; top: 40px; left: 0; bottom: 0; width: 150px;
+      border-right: 1px solid var(--border); padding: 10px 8px; background: var(--panel); }
+    .hf-cat { font-size: 9.5px; letter-spacing: .08em; color: var(--dim); margin: 10px 0 4px 6px; }
+    .hf-cat:first-child { margin-top: 0; }
+    .hf-item { display: flex; align-items: center; gap: 7px; padding: 5px 7px; border-radius: 6px;
+      font-size: 12px; transition: background .2s; }
+    .hf-item .hf-sq { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+    .hf-item .hf-io { margin-left: auto; font-size: 9.5px; color: var(--dim);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .hf-item.hot { background: var(--card); }
+
+    .hf-canvas { position: absolute; top: 40px; left: 150px; right: 0; bottom: 0;
+      background-color: #0e1118;
+      background-image: radial-gradient(circle, #1d2230 1px, transparent 1px); background-size: 22px 22px; }
+    .hf-wires { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+    .hf-wires path { fill: none; stroke: #39415a; stroke-width: 2; }
+    .hf-wires path.live { stroke: var(--accent); stroke-dasharray: 5 5; }
+    .hf-wires circle.packet { fill: var(--accent); filter: drop-shadow(0 0 6px var(--accent)); }
+    .hf-nodes { position: absolute; inset: 0; }
+
+    .hf-node {
+      position: absolute; width: 160px; background: var(--card);
+      border: 1px solid var(--border); border-radius: 10px;
+      transition: border-color .25s, box-shadow .25s;
+    }
+    .hf-node.new { animation: hf-pop .28s ease-out; }
+    @keyframes hf-pop { from { transform: scale(.88); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+    .hf-node[data-st="running"] { border-color: var(--accent); box-shadow: 0 0 20px -4px var(--accent); }
+    .hf-node[data-st="done"] { border-color: #2b7a5c; }
+    .hf-h { display: flex; align-items: center; gap: 7px; padding: 8px 10px; font-size: 12.5px;
+      font-weight: 600; border-bottom: 1px solid var(--border); }
+    .hf-h .hf-sq { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+    .hf-ports { display: flex; justify-content: space-between; gap: 12px; padding: 9px 10px; min-height: 30px; }
+    .hf-col { display: grid; gap: 8px; align-content: start; }
+    .hf-col.out { text-align: right; margin-left: auto; }
+    .hf-p { position: relative; font-size: 11px; color: var(--dim);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .hf-dot { position: absolute; top: 50%; width: 10px; height: 10px; margin-top: -5px;
+      border-radius: 50%; background: var(--accent); }
+    .hf-col.in .hf-dot { left: -15px; }
+    .hf-col.out .hf-dot { right: -15px; }
+    .hf-st { height: 20px; padding: 0 11px 7px; font-size: 10.5px; text-align: right;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: transparent; }
+    .hf-node[data-st="running"] .hf-st { color: var(--accent-soft); }
+    .hf-node[data-st="done"] .hf-st { color: #6fe0b8; }
+
+    .hf-insp { position: absolute; top: 40px; right: 0; bottom: 27px; width: 186px; padding: 14px 12px;
+      background: var(--panel); border-left: 1px solid var(--border);
+      transform: translateX(100%); transition: transform .45s cubic-bezier(.2,.7,.3,1); }
+    .hf-insp.on { transform: none; }
+    .hf-insp h6 { margin: 0 0 12px; font-size: 12px; display: flex; align-items: center; gap: 7px; }
+    .hf-insp .hf-lab { font-size: 9.5px; letter-spacing: .07em; color: var(--dim); margin: 12px 0 5px; }
+    .hf-insp .hf-field { background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+      padding: 6px 8px; font-size: 11px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      word-break: break-all; }
+
+    .hf-ghost { position: absolute; top: 0; left: 0; display: flex; align-items: center; gap: 7px;
+      padding: 6px 10px; border-radius: 8px; font-size: 12px; background: var(--card);
+      border: 1px solid var(--accent); box-shadow: 0 10px 24px -12px #000; opacity: 0; pointer-events: none; }
+    .hf-ghost .hf-sq { width: 8px; height: 8px; border-radius: 2px; }
+    .hf-ghost.on { opacity: .95; }
+    .hf-cursor { position: absolute; top: 0; left: 0; width: 18px; height: 18px; pointer-events: none;
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,.7)); }
+    .hf-cursor.press svg { transform: scale(.82); transform-origin: 2px 2px; }
+    .hf-foot { position: absolute; left: 150px; right: 0; bottom: 0; padding: 7px 14px; font-size: 10.5px;
+      color: var(--dim); display: flex; justify-content: space-between; border-top: 1px solid var(--border);
+      background: rgba(11,13,18,.72); }
   </style>
 </head>
 <body>
@@ -266,8 +350,30 @@
   </div>
 
   <section class="hero-shot wrap">
-    <figure class="shot" style="--shot-w:77.8%">
-      <a href="canvas.png" target="_blank" rel="noopener"><img src="canvas.png" alt="Flow canvas: Message, KEY and IV feed a Cipher module wired to an Output node"></a>
+    <figure class="hf" id="hero-flow" aria-label="An animated walkthrough: modules are dragged onto the canvas, wired together, run, and the result is read in the inspector">
+      <div class="hf-stage">
+        <div class="hf-bar">
+          <span class="hf-dots"><i></i><i></i><i></i></span>
+          <span class="hf-title">Flow</span>
+          <span class="hf-start" id="hf-start">▷ Start</span>
+        </div>
+        <aside class="hf-panel" id="hf-panel"></aside>
+        <div class="hf-canvas">
+          <svg class="hf-wires"></svg>
+          <div class="hf-nodes"></div>
+        </div>
+        <div class="hf-foot"><span id="hf-hint"></span><span id="hf-count"></span></div>
+        <aside class="hf-insp" id="hf-insp">
+          <h6><span class="hf-sq" style="width:9px;height:9px;border-radius:2px;background:#4fa3ff"></span>flow.output</h6>
+          <div class="hf-lab">NAME</div>
+          <div class="hf-field">Output</div>
+          <div class="hf-lab">RESULT</div>
+          <div class="hf-field" id="hf-result">SGVsbG8sIEZsb3ch</div>
+        </aside>
+        <div class="hf-ghost" id="hf-ghost"></div>
+        <div class="hf-cursor" id="hf-cursor"><svg viewBox="0 0 18 18" width="18" height="18"><path d="M2 2 L2 14 L5.6 10.6 L8.2 16 L10.6 14.8 L8 9.6 L13 9.6 Z" fill="#fff" stroke="#0b0d12" stroke-width="1.1" stroke-linejoin="round"/></svg></div>
+      </div>
+      <noscript><img src="canvas.png" alt="Flow canvas: Message, KEY and IV feed a Cipher module wired to an Output node" style="width:100%;display:block"></noscript>
     </figure>
   </section>
 
@@ -887,6 +993,349 @@
 
     buildPalette();
     reset();
+  })();
+  </script>
+
+  <script>
+  (function () {
+    var box = document.getElementById('hero-flow');
+    if (!box) return;
+    var stage = box.querySelector('.hf-stage');
+    var panel = document.getElementById('hf-panel');
+    var canvas = box.querySelector('.hf-canvas');
+    var svg = box.querySelector('.hf-wires');
+    var layer = box.querySelector('.hf-nodes');
+    var cursor = document.getElementById('hf-cursor');
+    var ghost = document.getElementById('hf-ghost');
+    var insp = document.getElementById('hf-insp');
+    var startBtn = document.getElementById('hf-start');
+    var hintEl = document.getElementById('hf-hint');
+    var countEl = document.getElementById('hf-count');
+
+    var TOP = 40;
+    /* two layouts: side by side on a wide screen, stacked on a phone */
+    var LAYOUTS = {
+      wide:    { w: 940, h: 430, panel: 150, insp: 186, pos: [[36, 112], [236, 112], [436, 112]] },
+      compact: { w: 400, h: 360, panel: 100, insp: 130, pos: [[6, 6], [6, 107], [6, 208]] }
+    };
+    var L = LAYOUTS.wide, PANEL = L.panel, W = L.w;
+    var YELLOW = '#f2c94c', BLUE = '#4fa3ff', PURPLE = '#b07bff';
+
+    var PALETTE = [
+      { cat: 'INPUTS', ko: '입력' }, { key: 'input', name: 'Input', color: YELLOW, io: '0→1' },
+      { cat: 'OUTPUTS', ko: '출력' }, { key: 'output', name: 'Output', color: BLUE, io: '1→0' },
+      { cat: 'CRYPTO', ko: '암호' }, { key: 'hash', name: 'Hash', color: PURPLE, io: '1→1' },
+      { cat: 'OTHER', ko: '기타' },
+      { key: 'base64', name: 'Base64', color: PURPLE, io: '1→1' },
+      { key: 'json', name: 'JSON', color: PURPLE, io: '1→1' },
+      { key: 'merge', name: 'Merge', color: PURPLE, io: '2→1' }
+    ];
+    panel.innerHTML = PALETTE.map(function (p) {
+      if (p.cat) return '<div class="hf-cat"><span lang-en>' + p.cat + '</span><span lang-ko>' + p.ko + '</span></div>';
+      return '<div class="hf-item" data-key="' + p.key + '">' +
+        '<span class="hf-sq" style="background:' + p.color + '"></span>' + p.name +
+        '<span class="hf-io">' + p.io + '</span></div>';
+    }).join('');
+
+    var PLAN = [
+      { key: 'input',  name: 'Input',  color: YELLOW, x: 36,  y: 112, ins: [], outs: ['out'] },
+      { key: 'base64', name: 'Base64', color: PURPLE, x: 236, y: 112, ins: ['in'], outs: ['out'] },
+      { key: 'output', name: 'Output', color: BLUE,   x: 436, y: 112, ins: ['in'], outs: [] }
+    ];
+    var LINKS = [[0, 'out', 1, 'in'], [1, 'out', 2, 'in']];
+
+    var HINTS = {
+      drag:    ['drag a module onto the canvas', '모듈을 캔버스로 끌어다 놓고'],
+      wire:    ['wire out → in', 'out → in 으로 연결하고'],
+      run:     ['press Start', '실행을 누르면'],
+      result:  ['read the result', '결과를 확인합니다']
+    };
+    var hint = 'drag', counts = [0, 0];
+    function paint() {
+      var ko = document.documentElement.getAttribute('data-lang') === 'ko';
+      hintEl.textContent = HINTS[hint][ko ? 1 : 0];
+      countEl.textContent = ko ? ('모듈 ' + counts[0] + '개 · 연결 ' + counts[1] + '개')
+                               : (counts[0] + ' modules · ' + counts[1] + ' connections');
+    }
+    document.querySelectorAll('[data-lang-btn]').forEach(function (b) { b.addEventListener('click', paint); });
+
+    function scale() { return stage.getBoundingClientRect().width / L.w; }
+    function apply(next) {
+      L = next; PANEL = L.panel; W = L.w;
+      stage.style.width = L.w + 'px';
+      stage.style.height = L.h + 'px';
+      panel.style.width = L.panel + 'px';
+      canvas.style.left = L.panel + 'px';
+      insp.style.width = L.insp + 'px';
+      box.querySelector('.hf-foot').style.left = L.panel + 'px';
+      PLAN.forEach(function (n, i) { n.x = L.pos[i][0]; n.y = L.pos[i][1]; });
+    }
+    function fit() {
+      var next = box.clientWidth < 620 ? LAYOUTS.compact : LAYOUTS.wide;
+      var flipped = next !== L;
+      if (flipped) apply(next);
+      var s = box.clientWidth / L.w;
+      stage.style.transform = 'scale(' + s + ')';
+      box.style.height = Math.round(L.h * s) + 'px';
+      renderNodes();
+      if (flipped && started) story();
+    }
+
+    /* positions, in canvas-local units */
+    function rectIn(el, host) {
+      var r = el.getBoundingClientRect(), h = host.getBoundingClientRect(), s = scale();
+      return { x: (r.left - h.left) / s, y: (r.top - h.top) / s, w: r.width / s, h: r.height / s };
+    }
+    function dotPos(i, port, dir) {
+      var el = layer.querySelector('[data-dot="' + i + '.' + port + '.' + dir + '"]');
+      if (!el) return { x: 0, y: 0 };
+      var r = rectIn(el, canvas);
+      return { x: r.x + r.w / 2, y: r.y + r.h / 2 };
+    }
+
+    var placed = [], wires = [], sts = {};
+    function renderNodes() {
+      layer.innerHTML = placed.map(function (i) {
+        var n = PLAN[i];
+        var ins = n.ins.map(function (p) {
+          return '<div class="hf-p"><span class="hf-dot" data-dot="' + i + '.' + p + '.in"></span>' + p + '</div>';
+        }).join('');
+        var outs = n.outs.map(function (p) {
+          return '<div class="hf-p">' + p + '<span class="hf-dot" data-dot="' + i + '.' + p + '.out"></span></div>';
+        }).join('');
+        var s = sts[i] || ['', ''];
+        return '<div class="hf-node" data-i="' + i + '" data-st="' + s[0] + '" style="left:' + n.x + 'px;top:' + n.y + 'px">' +
+          '<div class="hf-h"><span class="hf-sq" style="background:' + n.color + '"></span>' + n.name + '</div>' +
+          '<div class="hf-ports"><div class="hf-col in">' + ins + '</div><div class="hf-col out">' + outs + '</div></div>' +
+          '<div class="hf-st">' + s[1] + '</div></div>';
+      }).join('');
+      drawWires();
+    }
+    function curve(a, b) {
+      var dx = Math.max(34, Math.abs(b.x - a.x) / 2);
+      return 'M' + a.x + ' ' + a.y + ' C' + (a.x + dx) + ' ' + a.y + ', ' + (b.x - dx) + ' ' + b.y + ', ' + b.x + ' ' + b.y;
+    }
+    function drawWires(live) {
+      var out = wires.map(function (w) {
+        return '<path d="' + curve(dotPos(w[0], w[1], 'out'), dotPos(w[2], w[3], 'in')) + '"></path>';
+      }).join('');
+      if (live) out += '<path class="live" d="' + curve(live.a, live.b) + '"></path>';
+      out += '<circle class="packet" r="0"></circle>';
+      svg.innerHTML = out;
+    }
+    function status(i, st, text) {
+      sts[i] = [st, text || ''];
+      var el = layer.querySelector('.hf-node[data-i="' + i + '"]');
+      if (!el) return;
+      el.setAttribute('data-st', st);
+      el.querySelector('.hf-st').textContent = text || '';
+    }
+
+    /* ── tiny animation runtime ──────────────────────────── */
+    var gen = 0, timers = [];
+    function alive(g) { return g === gen; }
+    function wait(ms, g) {
+      return new Promise(function (res) { timers.push(setTimeout(function () { if (alive(g)) res(); }, ms)); });
+    }
+    function ease(k) { return k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; }
+    function tween(dur, g, step) {
+      return new Promise(function (res) {
+        var t0 = null;
+        function frame(t) {
+          if (!alive(g)) return res();
+          if (t0 === null) t0 = t;
+          var k = Math.min(1, (t - t0) / dur);
+          step(ease(k));
+          if (k < 1) requestAnimationFrame(frame); else res();
+        }
+        requestAnimationFrame(frame);
+      });
+    }
+
+    var at = { x: 120, y: 300 };   /* cursor, in stage units */
+    function place(x, y) {
+      at = { x: x, y: y };
+      cursor.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+      ghost.style.transform = 'translate(' + (x + 12) + 'px,' + (y + 12) + 'px)';
+    }
+    function moveTo(x, y, dur, g, onStep) {
+      var from = { x: at.x, y: at.y };
+      return tween(dur, g, function (k) {
+        place(from.x + (x - from.x) * k, from.y + (y - from.y) * k);
+        if (onStep) onStep();
+      });
+    }
+    function packet(w, dur, g) {
+      var path = svg.querySelector('path:nth-of-type(' + (w + 1) + ')');
+      var dot = svg.querySelector('circle.packet');
+      if (!path || !dot) return Promise.resolve();
+      var len = path.getTotalLength();
+      dot.setAttribute('r', 4);
+      return tween(dur, g, function (k) {
+        var p = path.getPointAtLength(len * k);
+        dot.setAttribute('cx', p.x); dot.setAttribute('cy', p.y);
+      }).then(function () { dot.setAttribute('r', 0); });
+    }
+
+    /* ── the walkthrough ─────────────────────────────────── */
+    function dragModule(i, g) {
+      var n = PLAN[i];
+      var item = panel.querySelector('[data-key="' + n.key + '"]');
+      var r = rectIn(item, stage);
+      return moveTo(r.x + 30, r.y + 8, 620, g).then(function () {
+        if (!alive(g)) return;
+        item.classList.add('hot');
+        cursor.classList.add('press');
+        ghost.innerHTML = '<span class="hf-sq" style="background:' + n.color + '"></span>' + n.name;
+        ghost.classList.add('on');
+        return wait(260, g);
+      }).then(function () {
+        if (!alive(g)) return;
+        return moveTo(PANEL + n.x + 34, TOP + n.y + 14, 900, g);
+      }).then(function () {
+        if (!alive(g)) return;
+        cursor.classList.remove('press');
+        ghost.classList.remove('on');
+        item.classList.remove('hot');
+        placed.push(i);
+        counts[0] = placed.length;
+        renderNodes(); paint();
+        var fresh = layer.querySelector('.hf-node[data-i="' + i + '"]');
+        if (fresh) {
+          fresh.classList.add('new');
+          timers.push(setTimeout(function () { fresh.classList.remove('new'); }, 320));
+        }
+        return wait(260, g);
+      });
+    }
+
+    function connect(link, g) {
+      var a = dotPos(link[0], link[1], 'out'), b = dotPos(link[2], link[3], 'in');
+      return moveTo(PANEL + a.x, TOP + a.y, 520, g).then(function () {
+        if (!alive(g)) return;
+        cursor.classList.add('press');
+        return moveTo(PANEL + b.x, TOP + b.y, 760, g, function () {
+          drawWires({ a: a, b: { x: at.x - PANEL, y: at.y - TOP } });
+        });
+      }).then(function () {
+        if (!alive(g)) return;
+        cursor.classList.remove('press');
+        wires.push(link);
+        counts[1] = wires.length;
+        drawWires(); paint();
+        return wait(240, g);
+      });
+    }
+
+    function runFlow(g) {
+      var r = rectIn(startBtn, stage);
+      hint = 'run'; paint();
+      return moveTo(r.x + r.w / 2, r.y + r.h / 2, 640, g).then(function () {
+        if (!alive(g)) return;
+        cursor.classList.add('press'); startBtn.classList.add('press');
+        return wait(220, g);
+      }).then(function () {
+        if (!alive(g)) return;
+        cursor.classList.remove('press'); startBtn.classList.remove('press');
+        status(0, 'running', 'running…');
+        return wait(460, g);
+      }).then(function () {
+        if (!alive(g)) return;
+        status(0, 'done', 'done');
+        return packet(0, 820, g);
+      }).then(function () {
+        if (!alive(g)) return;
+        status(1, 'running', 'running…');
+        return wait(640, g);
+      }).then(function () {
+        if (!alive(g)) return;
+        status(1, 'done', 'done');
+        return packet(1, 820, g);
+      }).then(function () {
+        if (!alive(g)) return;
+        status(2, 'running', 'running…');
+        return wait(420, g);
+      }).then(function () {
+        if (!alive(g)) return;
+        status(2, 'done', 'done');
+        return wait(240, g);
+      });
+    }
+
+    function readResult(g) {
+      hint = 'result'; paint();
+      var n = PLAN[2];
+      return moveTo(PANEL + n.x + 60, TOP + n.y + 14, 560, g).then(function () {
+        if (!alive(g)) return;
+        cursor.classList.add('press');
+        return wait(200, g);
+      }).then(function () {
+        if (!alive(g)) return;
+        cursor.classList.remove('press');
+        insp.classList.add('on');
+        return wait(2600, g);
+      });
+    }
+
+    function clear() {
+      placed = []; wires = []; sts = {}; counts = [0, 0];
+      insp.classList.remove('on');
+      layer.innerHTML = ''; drawWires();
+      hint = 'drag'; paint();
+      place(120, 300);
+    }
+
+    function story() {
+      var g = ++gen;
+      timers.forEach(clearTimeout); timers = [];
+      clear();
+      var chain = wait(600, g);
+      [0, 1, 2].forEach(function (i) {
+        chain = chain.then(function () { return alive(g) && dragModule(i, g); });
+      });
+      chain = chain.then(function () { if (!alive(g)) return; hint = 'wire'; paint(); return wait(200, g); });
+      LINKS.forEach(function (l) {
+        chain = chain.then(function () { return alive(g) && connect(l, g); });
+      });
+      return chain
+        .then(function () { return alive(g) && runFlow(g); })
+        .then(function () { return alive(g) && readResult(g); })
+        .then(function () { if (alive(g)) story(); });
+    }
+
+    function finished() {
+      var g = ++gen;
+      timers.forEach(clearTimeout); timers = [];
+      placed = [0, 1, 2]; wires = LINKS.slice(); counts = [3, 2];
+      renderNodes(); paint();
+      [0, 1, 2].forEach(function (i) { status(i, 'done', 'done'); });
+      insp.classList.add('on');
+      place(-40, -40);
+    }
+
+    var started = false;
+    window.addEventListener('resize', fit);
+    apply(LAYOUTS.wide);
+    fit();
+
+    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (still) { finished(); return; }
+
+    var playing = false;
+    function watch(on) {
+      if (on && !playing) { playing = true; started = true; story(); }
+      else if (!on && playing) { playing = false; gen++; timers.forEach(clearTimeout); timers = []; }
+    }
+    if (window.IntersectionObserver) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (e) { watch(e.isIntersecting); });
+      }, { threshold: .25 }).observe(box);
+    } else {
+      watch(true);
+    }
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) watch(false);
+    });
   })();
   </script>
 
