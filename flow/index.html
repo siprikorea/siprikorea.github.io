@@ -1321,20 +1321,25 @@
     var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (still) { finished(); return; }
 
-    var playing = false;
+    var playing = false, inView = false;
     function watch(on) {
       if (on && !playing) { playing = true; started = true; story(); }
       else if (!on && playing) { playing = false; gen++; timers.forEach(clearTimeout); timers = []; }
     }
+    /* the tweens run on animation frames, which a hidden tab stops delivering,
+       so coming back starts the walkthrough over rather than resuming a run
+       that was cut off halfway */
+    function onView() { if (inView) { watch(false); watch(true); } else watch(false); }
     if (window.IntersectionObserver) {
       new IntersectionObserver(function (es) {
-        es.forEach(function (e) { watch(e.isIntersecting); });
+        es.forEach(function (e) { inView = e.isIntersecting; });
+        onView();
       }, { threshold: .25 }).observe(box);
     } else {
-      watch(true);
+      inView = true; onView();
     }
     document.addEventListener('visibilitychange', function () {
-      if (document.hidden) watch(false);
+      if (document.hidden) watch(false); else onView();
     });
   })();
   </script>
