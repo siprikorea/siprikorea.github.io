@@ -78,7 +78,15 @@
 
     .cols2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px 56px; align-items: start; }
     figure { margin: 0; }
-    .shot { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 24px 60px -30px rgba(0,0,0,.6); }
+    /* every screenshot is shown at one zoom level: its width is its own pixel
+       width measured against the widest shot, so the app's UI is the same size
+       in all of them. The frame hugs whatever that comes to. */
+    .shot {
+      border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+      box-shadow: 0 24px 60px -30px rgba(0,0,0,.6);
+      width: var(--shot-w, 100%); margin: 0 auto;
+    }
+    .shot a { display: block; }
     .shot img { display: block; width: 100%; height: auto; }
 
     .pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 26px; }
@@ -247,7 +255,7 @@
 
   <section class="hero-shot wrap">
     <figure class="shot">
-      <img src="canvas.png" alt="Flow canvas: Message, KEY and IV feed a Cipher module wired to an Output node">
+      <a href="canvas.png" target="_blank" rel="noopener"><img src="canvas.png" alt="Flow canvas: Message, KEY and IV feed a Cipher module wired to an Output node"></a>
     </figure>
   </section>
 
@@ -300,7 +308,7 @@
           <span class="pill error" lang-en>Error</span><span class="pill error" lang-ko>오류</span>
         </div>
       </div>
-      <figure class="shot"><img src="modules.png" alt="The module list: Inputs, Outputs and Crypto categories"></figure>
+      <figure class="shot" style="--shot-w:50%"><a href="modules.png" target="_blank" rel="noopener"><img src="modules.png" alt="The module list: Inputs, Outputs and Crypto categories"></a></figure>
     </div>
   </section>
 
@@ -347,7 +355,7 @@
         <p class="body" lang-en>From the market in settings, install and remove modules published to the module repository, and update them when a new version lands. Everything installed collects in the module list, ready to drag straight onto the canvas.</p>
         <p class="body" lang-ko>설정 화면의 마켓에서 모듈 저장소에 올라온 모듈을 설치하고 삭제하며, 새 버전이 나오면 업데이트합니다. 설치한 모듈은 모듈 리스트에 모이고, 거기서 캔버스로 바로 끌어다 쓰면 됩니다.</p>
       </div>
-      <figure class="shot"><img src="market.png" alt="The Modules settings screen: a marketplace list with Slack selected, showing its version, description and settings"></figure>
+      <figure class="shot" style="--shot-w:88.9%"><a href="market.png" target="_blank" rel="noopener"><img src="market.png" alt="The Modules settings screen: a marketplace list with Slack selected, showing its version, description and settings"></a></figure>
     </div>
   </section>
 
@@ -360,7 +368,7 @@
         <p class="body" lang-en>Describe the flow you want and AI assembles the complicated parts for you. Feed in the data, run it, read the result — and edit the generated flow by hand on the canvas whenever you like.</p>
         <p class="body" lang-ko>원하는 흐름을 말로 설명하면 AI가 복잡한 Flow를 대신 구성합니다. 데이터만 넣고 실행해 결과를 확인하세요. 만들어진 Flow는 언제든 캔버스에서 직접 손볼 수 있습니다.</p>
       </div>
-      <figure class="shot"><img src="ai.png" alt="The AI panel building an AES encryption flow from a one-line request, with the finished node graph on the canvas"></figure>
+      <figure class="shot" style="--shot-w:100%"><a href="ai.png" target="_blank" rel="noopener"><img src="ai.png" alt="The AI panel building an AES encryption flow from a one-line request, with the finished node graph on the canvas"></a></figure>
     </div>
   </section>
 
@@ -376,14 +384,14 @@
         <h3 lang-ko>ASN.1 — 구조와 바이트를 나란히</h3>
         <p class="body" lang-en>Signature data in hex tells you almost nothing about what was produced. Pick a node in the DER tree on the left and its hex appears on the right, with Tag and Length below.</p>
         <p class="body" lang-ko>전자서명 데이터는 16진수만 봐서는 무엇이 만들어졌는지 알기 어렵습니다. 왼쪽 DER 트리에서 노드를 고르면 오른쪽에 해당 구간의 16진수가, 아래에 Tag와 Length가 표시됩니다.</p>
-        <figure class="shot"><img src="asn1.png" alt="The ASN.1 view: a DER tree on the left, hex dump on the right"></figure>
+        <figure class="shot" style="--shot-w:94.4%"><a href="asn1.png" target="_blank" rel="noopener"><img src="asn1.png" alt="The ASN.1 view: a DER tree on the left, hex dump on the right"></a></figure>
       </div>
       <div>
         <h3 lang-en>IMAGE — image data as an image</h3>
         <h3 lang-ko>IMAGE — 이미지 데이터는 이미지로</h3>
         <p class="body" lang-en>See the image a processor produced exactly as it is, with its metadata alongside.</p>
         <p class="body" lang-ko>프로세서가 만든 이미지를 그대로 띄워 보고, 이미지 메타데이터까지 함께 확인합니다.</p>
-        <figure class="shot"><img src="image-view.png" alt="The Image view showing a generated QR code"></figure>
+        <figure class="shot" style="--shot-w:66.7%"><a href="image-view.png" target="_blank" rel="noopener"><img src="image-view.png" alt="The Image view showing a generated QR code"></a></figure>
       </div>
     </div>
   </section>
@@ -538,6 +546,7 @@
       conns.push({ f: b.id, fp: 'out', t: c.id, tp: 'in' });
       selected = b.id;
       say('');
+      remember();
       render();
     }
 
@@ -844,12 +853,19 @@
 
     runBtn.addEventListener('click', run);
     document.getElementById('pg-reset').addEventListener('click', function () { if (!running) reset(); });
+    var lastSize = null;
+    function remember() { var r = canvas.getBoundingClientRect(); lastSize = { w: r.width, h: r.height }; }
     window.addEventListener('resize', function () {
       var r = canvas.getBoundingClientRect();
+      if (!lastSize) { remember(); return; }
+      if (Math.abs(lastSize.w - r.width) < 1 && Math.abs(lastSize.h - r.height) < 1) return;
+      var sx = (r.width - 172) / Math.max(1, lastSize.w - 172);
+      var sy = (r.height - 66) / Math.max(1, lastSize.h - 66);
       nodes.forEach(function (n) {
-        n.x = Math.max(0, Math.min(r.width - 172, n.x));
-        n.y = Math.max(0, Math.min(r.height - 60, n.y));
+        n.x = Math.max(0, Math.min(r.width - 172, n.x * sx));
+        n.y = Math.max(0, Math.min(r.height - 66, n.y * sy));
       });
+      remember();
       render();
     });
 
