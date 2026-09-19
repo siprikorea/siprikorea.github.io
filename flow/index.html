@@ -80,6 +80,9 @@
     .cols2 { display: block; }
     .cols2 > div { max-width: 64ch; }
     .cols2 > figure { margin-top: 32px; }
+    /* the module list is a tall, narrow crop: it sits beside its text, not under it */
+    .cols2.side { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 0 56px; align-items: start; }
+    .cols2.side > figure { margin-top: 4px; }
     figure { margin: 0; }
     /* every screenshot is shown at one zoom level: its width is its own pixel
        width measured against the widest shot, so the app's UI is the same size
@@ -119,6 +122,11 @@
     footer .links { display: flex; gap: 18px; font-size: 13px; }
     footer .links a { color: var(--dim); text-decoration: none; }
     footer .links a:hover { color: var(--text); }
+
+    @media (max-width: 860px) {
+      .cols2.side { display: block; }
+      .cols2.side > figure { margin-top: 32px; width: 50%; }  /* back to the shared zoom */
+    }
 
     @media (max-width: 720px) {
       .hero h1 { font-size: 30px; }
@@ -297,7 +305,7 @@
 
   <section id="canvas" class="wrap">
     <span class="kicker">02 — <span lang-en>Canvas</span><span lang-ko>캔버스</span></span>
-    <div class="cols2">
+    <div class="cols2 side">
       <div>
         <h2 lang-en>The flow is exactly what's on screen</h2>
         <h2 lang-ko>흐름은 화면에 그려진 그대로다</h2>
@@ -312,7 +320,7 @@
           <span class="pill error" lang-en>Error</span><span class="pill error" lang-ko>오류</span>
         </div>
       </div>
-      <figure class="shot" style="--shot-w:50%"><a href="modules.png" target="_blank" rel="noopener"><img src="modules.png" alt="The module list: Inputs, Outputs and Crypto categories"></a></figure>
+      <figure class="shot" style="--shot-w:100%"><a href="modules.png" target="_blank" rel="noopener"><img src="modules.png" alt="The module list: Inputs, Outputs and Crypto categories"></a></figure>
     </div>
   </section>
 
