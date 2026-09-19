@@ -179,11 +179,6 @@
     }
     .pg-col.in .pg-dot { left: -15px; }
     .pg-col.out .pg-dot { right: -15px; }
-    .pg-val {
-      margin: 0 10px 10px; padding: 6px 8px; border-radius: 6px; background: #0e1118;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: var(--dim);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
     .pg-hint { padding: 9px 12px; border-top: 1px solid var(--border); font-size: 11.5px; color: var(--dim); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 
     .pg-inspector h5 { margin: 0 0 8px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 7px; }
@@ -260,8 +255,8 @@
     <span class="kicker">01 — <span lang-en>Try it</span><span lang-ko>체험하기</span></span>
     <h2 lang-en>Build a flow right here, in the browser</h2>
     <h2 lang-ko>브라우저에서 직접 만들어 보세요</h2>
-    <p class="body" lang-en style="max-width:60ch">Click a module on the left to drop it on the canvas, drag from an <b>out</b> dot to an <b>in</b> dot to wire it up, and press Start. Pick a module to edit its options on the right. It starts with Input → Base64 → Output, just like the app.</p>
-    <p class="body" lang-ko style="max-width:60ch">왼쪽 모듈을 누르면 캔버스에 놓이고, <b>out</b> 점에서 <b>in</b> 점으로 끌면 연결됩니다. Start를 누르면 실행됩니다. 모듈을 선택하면 오른쪽에서 옵션을 바꿀 수 있습니다. 앱과 똑같이 Input → Base64 → Output 으로 시작합니다.</p>
+    <p class="body" lang-en style="max-width:60ch">Click a module on the left to drop it on the canvas, drag from an <b>out</b> dot to an <b>in</b> dot to wire it up, and press Start. Pick a module to set its options and read its result on the right. It starts with Input → Base64 → Output, just like the app.</p>
+    <p class="body" lang-ko style="max-width:60ch">왼쪽 모듈을 누르면 캔버스에 놓이고, <b>out</b> 점에서 <b>in</b> 점으로 끌면 연결됩니다. Start를 누르면 실행됩니다. 모듈을 선택하면 오른쪽에서 옵션을 바꾸고 결과를 볼 수 있습니다. 앱과 똑같이 Input → Base64 → Output 으로 시작합니다.</p>
 
     <div class="pg">
       <aside class="pg-palette" id="pg-palette"></aside>
@@ -276,8 +271,8 @@
           <div class="pg-nodes" id="pg-nodes"></div>
         </div>
         <div class="pg-hint">
-          <span lang-en>drag a module to move · drag out → in to connect · click a wire to remove it</span>
-          <span lang-ko>모듈을 끌어 이동 · out → in 으로 끌어 연결 · 연결선을 누르면 삭제</span>
+          <span lang-en>drag to move · drag out → in to connect · click a wire to remove it · results appear on the right</span>
+          <span lang-ko>끌어서 이동 · out → in 으로 끌어 연결 · 연결선을 누르면 삭제 · 결과는 오른쪽에</span>
           <span id="pg-count"></span>
         </div>
       </div>
@@ -592,15 +587,11 @@
         var outs = d.outs.map(function (p) {
           return '<div class="pg-p">' + p + '<span class="pg-dot" data-node="' + n.id + '" data-port="' + p + '" data-dir="out"></span></div>';
         }).join('');
-        var preview = '';
-        if (n.err) preview = '<div class="pg-val" style="color:#ff9e9e">' + esc(n.err) + '</div>';
-        else if (n.type === 'input') preview = '<div class="pg-val">' + esc(n.opts.value || '—') + '</div>';
-        else if (n.value != null) preview = '<div class="pg-val">' + esc(n.value) + '</div>';
         return '<div class="pg-node" data-id="' + n.id + '" data-st="' + n.st + '" data-sel="' + (selected === n.id ? 1 : 0) + '"' +
           ' style="left:' + n.x + 'px;top:' + n.y + 'px">' +
           '<div class="pg-node-h"><span class="pg-sq" style="background:' + d.color + '"></span>' + esc(n.name) + '</div>' +
           '<div class="pg-ports"><div class="pg-col in">' + ins + '</div><div class="pg-col out">' + outs + '</div></div>' +
-          preview + '</div>';
+          '</div>';
       }).join('');
       drawWires();
       renderInspector();
@@ -704,13 +695,11 @@
       render();
     });
 
-    /* redraw one node's header/preview without losing focus in the inspector */
+    /* rename in place, so the inspector keeps focus while typing */
     function touchNode(n) {
       var el = layer.querySelector('.pg-node[data-id="' + n.id + '"]');
       if (!el) return;
       el.querySelector('.pg-node-h').lastChild.textContent = n.name;
-      var val = el.querySelector('.pg-val');
-      if (n.type === 'input' && val) val.textContent = n.opts.value || '—';
     }
 
     /* ── dragging & linking ──────────────────────────────── */
@@ -834,6 +823,7 @@
           }).catch(function (err) {
             n.err = (err && err.message) || String(err);
             n.st = 'error';
+            selected = n.id;
             render();
             throw err;
           });
