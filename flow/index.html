@@ -71,12 +71,15 @@
 
     section { padding: 60px 0; border-top: 1px solid var(--border); }
     section.hero-shot { padding-top: 8px; border-top: none; }
+    .hero-shot .shot { margin: 0 auto; }
     .kicker { display: block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
     h2 { font-size: 28px; margin: 0; letter-spacing: -0.015em; line-height: 1.3; }
     h3 { font-size: 18px; margin: 0; }
     p.body { font-size: 15px; line-height: 1.8; color: var(--dim); margin: 16px 0 0; }
 
-    .cols2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px 56px; align-items: start; }
+    .cols2 { display: block; }
+    .cols2 > div { max-width: 64ch; }
+    .cols2 > figure { margin-top: 32px; }
     figure { margin: 0; }
     /* every screenshot is shown at one zoom level: its width is its own pixel
        width measured against the widest shot, so the app's UI is the same size
@@ -84,7 +87,7 @@
     .shot {
       border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
       box-shadow: 0 24px 60px -30px rgba(0,0,0,.6);
-      width: var(--shot-w, 100%); margin: 0 auto;
+      width: var(--shot-w, 100%); margin: 0;
     }
     .shot a { display: block; }
     .shot img { display: block; width: 100%; height: auto; }
@@ -107,8 +110,9 @@
     .card.pt { border-top-color: var(--cyan); }
 
     .stack { display: grid; gap: 16px; }
-    .views2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px 56px; margin-top: 8px; }
-    .views2 p.body { margin-bottom: 18px; }
+    .views2 { display: block; margin-top: 8px; }
+    .views2 > div + div { margin-top: 52px; }
+    .views2 p.body { max-width: 64ch; margin-bottom: 22px; }
 
     footer { border-top: 1px solid var(--border); padding: 28px 0; }
     footer .wrap { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
@@ -254,7 +258,7 @@
   </div>
 
   <section class="hero-shot wrap">
-    <figure class="shot">
+    <figure class="shot" style="--shot-w:77.8%">
       <a href="canvas.png" target="_blank" rel="noopener"><img src="canvas.png" alt="Flow canvas: Message, KEY and IV feed a Cipher module wired to an Output node"></a>
     </figure>
   </section>
