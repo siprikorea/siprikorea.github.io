@@ -254,9 +254,9 @@
   <section id="try" class="wrap">
     <span class="kicker">01 — <span lang-en>Try it</span><span lang-ko>체험하기</span></span>
     <h2 lang-en>Build a flow right here, in the browser</h2>
-    <h2 lang-ko>브라우저에서 직접 만들어 보세요</h2>
+    <h2 lang-ko>설치하기 전에, 여기서 먼저 만들어 본다</h2>
     <p class="body" lang-en style="max-width:60ch">Click a module on the left to drop it on the canvas, drag from an <b>out</b> dot to an <b>in</b> dot to wire it up, and press Start. Pick a module to set its options and read its result on the right. It starts with Input → Base64 → Output, just like the app.</p>
-    <p class="body" lang-ko style="max-width:60ch">왼쪽 모듈을 누르면 캔버스에 놓이고, <b>out</b> 점에서 <b>in</b> 점으로 끌면 연결됩니다. Start를 누르면 실행됩니다. 모듈을 선택하면 오른쪽에서 옵션을 바꾸고 결과를 볼 수 있습니다. 앱과 똑같이 Input → Base64 → Output 으로 시작합니다.</p>
+    <p class="body" lang-ko style="max-width:60ch">왼쪽 목록에서 모듈을 고르면 캔버스에 놓입니다. <b>out</b> 점을 잡아 <b>in</b> 점으로 끌면 선이 이어지고, <b>실행</b>을 누르면 모듈이 순서대로 돌아갑니다. 모듈을 고르면 오른쪽에서 옵션을 바꾸고 결과를 확인합니다. 앱과 같은 Input → Base64 → Output 으로 시작합니다.</p>
 
     <div class="pg">
       <aside class="pg-palette" id="pg-palette"></aside>
@@ -280,7 +280,7 @@
     </div>
 
     <p class="body" lang-en style="max-width:60ch">This is a small taste running in your browser — six modules and one canvas. The macOS app has the full module list (Cipher, Signature, JWT, TOTP, Key Store, AI, Slack …), the market, files as input, saved flows as parts, and result views like ASN.1 and IMAGE. <a href="https://github.com/siprikorea/flow/releases/latest" style="color:var(--accent-soft)">Install Flow for macOS</a> to use them.</p>
-    <p class="body" lang-ko style="max-width:60ch">여기는 브라우저에서 돌아가는 맛보기입니다 — 모듈 여섯 개와 캔버스 하나. 전체 모듈(Cipher, Signature, JWT, TOTP, Key Store, AI, Slack …)과 마켓, 파일 입력, 저장한 흐름을 부품으로 쓰기, ASN.1·IMAGE 같은 결과 뷰는 macOS 앱에서 확인하세요. <a href="https://github.com/siprikorea/flow/releases/latest" style="color:var(--accent-soft)">macOS용 Flow 설치하기</a></p>
+    <p class="body" lang-ko style="max-width:60ch">여기까지가 맛보기입니다. 모듈 여섯 개와 캔버스 하나뿐이고, 계산은 모두 이 브라우저 안에서 끝납니다. 나머지는 앱에 있습니다 — Cipher · Signature · JWT · TOTP · Key Store · AI · Slack 으로 이어지는 모듈 전체와 마켓, 파일을 그대로 넣는 입력, 저장한 흐름을 부품으로 쓰기, ASN.1 · IMAGE 결과 뷰까지. <a href="https://github.com/siprikorea/flow/releases/latest" style="color:var(--accent-soft)">macOS용 Flow 설치하기</a></p>
   </section>
 
   <section id="canvas" class="wrap">
@@ -595,7 +595,8 @@
       }).join('');
       drawWires();
       renderInspector();
-      countEl.textContent = nodes.length + t(' modules · ', '개 모듈 · ') + conns.length + t(' connections', '개 연결');
+      countEl.textContent = t(nodes.length + ' modules · ' + conns.length + ' connections',
+        '모듈 ' + nodes.length + '개 · 연결 ' + conns.length + '개');
     }
 
     function esc(s) {
@@ -639,7 +640,7 @@
       var n = nodeById(selected);
       if (!n) {
         inspector.innerHTML = '<p class="pg-empty"><span lang-en>Pick a module on the canvas to see its options here.</span>' +
-          '<span lang-ko>캔버스에서 모듈을 선택하면 옵션이 여기 나옵니다.</span></p>';
+          '<span lang-ko>캔버스에서 모듈을 고르면 옵션과 결과가 여기 나옵니다.</span></p>';
         return;
       }
       var d = TYPES[n.type], html = '';
@@ -777,7 +778,7 @@
       });
       if (missing) {
         render();
-        say('Port not connected: ' + missing, '연결되지 않은 포트: ' + missing, 'bad');
+        say('Port not connected: ' + missing, '연결되지 않은 포트 · ' + missing, 'bad');
         return;
       }
 
@@ -794,13 +795,13 @@
         });
       }
       if (order.length !== nodes.length) {
-        say('The flow has a cycle.', '흐름에 순환이 있습니다.', 'bad');
+        say('The flow has a cycle.', '연결이 한 바퀴 돌아 제자리로 옵니다.', 'bad');
         return;
       }
 
       running = true;
       runBtn.disabled = true;
-      say('Running…', '실행 중…');
+      say('Running…', '실행하는 중…');
 
       var chain = Promise.resolve();
       order.forEach(function (id) {
@@ -834,7 +835,7 @@
         say('Done', '완료', 'ok');
       }).catch(function (err) {
         var em = (err && err.message) || String(err);
-        say('Stopped: ' + em, '중단됨: ' + em, 'bad');
+        say('Stopped: ' + em, '실행 중단 · ' + em, 'bad');
       }).then(function () {
         running = false;
         runBtn.disabled = false;
