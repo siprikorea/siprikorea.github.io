@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stetris</title>
+<link rel="icon" href="./icon.png">
+<style>
+  :root {
+    --bg: #0b0f1a;
+    --panel: #141b2d;
+    --grid: #1e2740;
+    --cell: #10182b;
+    --text: #e8ecf6;
+    --muted: #8892a8;
+    --accent: #3dd568;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 500 15px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+  }
+
+  main {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  canvas {
+    display: block;
+    border-radius: 10px;
+    background: var(--cell);
+    box-shadow: 0 10px 40px rgb(0 0 0 / 0.5);
+    touch-action: none;
+  }
+
+  aside {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 140px;
+  }
+
+  .box {
+    background: var(--panel);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+
+  .label {
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .value {
+    font-size: 22px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 12px;
+  }
+
+  .state {
+    min-height: 1.4em;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+  }
+
+  .state[data-state="paused"] { color: #eab308; }
+  .state[data-state="gameover"] { color: #ef4444; }
+
+  kbd {
+    background: var(--grid);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font: inherit;
+    font-size: 11px;
+  }
+
+  .keys {
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 2;
+  }
+
+  .source {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 12px;
+  }
+
+  .source:hover { color: var(--text); }
+  .source svg { flex: none; fill: currentColor; }
+
+  .touch {
+    display: none;
+    gap: 8px;
+  }
+
+  .touch button {
+    flex: 1;
+    padding: 14px 0;
+    font: inherit;
+    font-size: 18px;
+    color: var(--text);
+    background: var(--panel);
+    border: 0;
+    border-radius: 10px;
+  }
+
+  .touch button:active { background: var(--grid); }
+
+  @media (hover: none) and (pointer: coarse) {
+    .touch { display: flex; }
+    .keys { display: none; }
+  }
+
+  @media (max-width: 560px) {
+    main { flex-direction: column; align-items: center; gap: 12px; }
+    aside { width: 100%; min-width: 0; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <canvas id="board" width="300" height="600" aria-label="Stetris board"></canvas>
+
+  <aside>
+    <div class="box">
+      <div class="label">Next</div>
+      <canvas id="next" width="120" height="120"></canvas>
+    </div>
+
+    <div class="box stats">
+      <div><div class="label">Score</div><div class="value" id="score">0</div></div>
+      <div><div class="label">High</div><div class="value" id="high">0</div></div>
+      <div><div class="label">Level</div><div class="value" id="level">1</div></div>
+      <div><div class="label">Lines</div><div class="value" id="lines">0</div></div>
+    </div>
+
+    <div class="box">
+      <div class="state" id="state"></div>
+      <div class="keys">
+        <kbd>&larr;</kbd> <kbd>&rarr;</kbd> move &nbsp; <kbd>&uarr;</kbd> rotate<br>
+        <kbd>&darr;</kbd> soft drop &nbsp; <kbd>space</kbd> hard drop<br>
+        <kbd>P</kbd> pause &nbsp; <kbd>R</kbd> restart
+      </div>
+      <div class="touch">
+        <button data-key="left" aria-label="move left">&larr;</button>
+        <button data-key="rotate" aria-label="rotate">&#8635;</button>
+        <button data-key="right" aria-label="move right">&rarr;</button>
+        <button data-key="drop" aria-label="hard drop">&darr;&darr;</button>
+      </div>
+    </div>
+
+    <a class="box source" href="https://github.com/siprikorea/stetris"
+       target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38l-.01-1.34c-2.23.48-2.7-1.07-2.7-1.07-.36-.93-.89-1.18-.89-1.18-.73-.5.05-.49.05-.49.8.06 1.23.83 1.23.83.72 1.23 1.88.87 2.34.67.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48l-.01 2.2c0 .21.14.46.55.38A8 8 0 0 0 8 0z"/>
+      </svg>
+      <span>Source on GitHub</span>
+    </a>
+  </aside>
+</main>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>
