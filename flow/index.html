@@ -307,6 +307,43 @@
     .hf-foot { position: absolute; left: 150px; right: 0; bottom: 0; padding: 7px 14px; font-size: 10.5px;
       color: var(--dim); display: flex; justify-content: space-between; border-top: 1px solid var(--border);
       background: rgba(11,13,18,.72); }
+
+    /* ── the AI panel, for the second walkthrough ─────────── */
+    .hf-ai {
+      position: absolute; top: 40px; left: 0; bottom: 0; width: 264px; padding: 10px 11px;
+      border-right: 1px solid var(--border); background: var(--panel);
+      display: flex; flex-direction: column;
+    }
+    .hf-ai-h { font-size: 9.5px; letter-spacing: .08em; color: var(--dim); margin-bottom: 9px; }
+    .hf-ai-log { flex: 1; overflow-y: auto; scrollbar-width: none; }
+    .hf-ai-log::-webkit-scrollbar { display: none; }
+    .hf-ai-you, .hf-ai-bot { opacity: 0; transition: opacity .3s; }
+    .hf-ai-you.on, .hf-ai-bot.on { opacity: 1; }
+    .hf-ai-bot { margin-top: 12px; }
+    .hf-ai-tag { display: block; font-size: 9px; letter-spacing: .09em; margin-bottom: 4px; }
+    .hf-ai-tag.you { color: var(--accent-soft); }
+    .hf-ai-tag.bot { color: var(--purple); }
+    .hf-ai-said { margin: 0; font-size: 11.5px; line-height: 1.55; background: var(--card);
+      border: 1px solid var(--border); border-radius: 7px; padding: 7px 9px; }
+    .hf-ai-lines p { margin: 0 0 7px; font-size: 11px; line-height: 1.55; color: var(--dim);
+      opacity: 0; transform: translateY(3px); transition: opacity .25s, transform .25s; }
+    .hf-ai-lines p.on { opacity: 1; transform: none; }
+    .hf-ai-lines b { color: var(--text); font-weight: 600; }
+    .hf-ai-input { display: flex; align-items: center; gap: 8px; margin-top: 10px;
+      border: 1px solid var(--border); background: var(--card); border-radius: 8px; padding: 6px 8px; }
+    .hf-ai-field { flex: 1; min-width: 0; font-size: 11.5px; line-height: 1.4; color: var(--text); word-break: break-word; }
+    .hf-ai-field:empty::before { content: 'What should it do?'; color: var(--dim); }
+    .hf-ai-field::after {
+      content: ''; display: inline-block; width: 1px; height: 11px; vertical-align: -1px;
+      background: var(--accent); margin-left: 2px; animation: hf-blink 1.05s steps(1) infinite;
+    }
+    @keyframes hf-blink { 50% { opacity: 0 } }
+    .hf-ai-send {
+      width: 20px; height: 20px; flex: none; border-radius: 50%; background: var(--accent); color: #fff;
+      font-size: 11px; display: flex; align-items: center; justify-content: center;
+      transition: transform .12s, filter .12s;
+    }
+    .hf-ai-send.press { transform: scale(.9); filter: brightness(1.3); }
   </style>
 </head>
 <body>
@@ -357,12 +394,12 @@
           <span class="hf-title">Flow</span>
           <span class="hf-start" id="hf-start">▷ Start</span>
         </div>
-        <aside class="hf-panel" id="hf-panel"></aside>
+        <aside class="hf-panel hf-side" id="hf-panel"></aside>
         <div class="hf-canvas">
           <svg class="hf-wires"></svg>
           <div class="hf-nodes"></div>
         </div>
-        <div class="hf-foot"><span id="hf-hint"></span><span id="hf-count"></span></div>
+        <div class="hf-foot"><span class="hf-hint" id="hf-hint"></span><span class="hf-count" id="hf-count"></span></div>
         <aside class="hf-insp" id="hf-insp">
           <h6><span class="hf-sq" style="width:9px;height:9px;border-radius:2px;background:#4fa3ff"></span>flow.output</h6>
           <div class="hf-lab">NAME</div>
@@ -486,7 +523,37 @@
         <p class="body" lang-en>Describe the flow you want and AI assembles the complicated parts for you. Feed in the data, run it, read the result — and edit the generated flow by hand on the canvas whenever you like.</p>
         <p class="body" lang-ko>원하는 흐름을 말로 설명하면 AI가 복잡한 Flow를 대신 구성합니다. 데이터만 넣고 실행해 결과를 확인하세요. 만들어진 Flow는 언제든 캔버스에서 직접 손볼 수 있습니다.</p>
       </div>
-      <figure class="shot" style="--shot-w:100%"><a href="ai.png" target="_blank" rel="noopener"><img src="ai.png" alt="The AI panel building an AES encryption flow from a one-line request, with the finished node graph on the canvas"></a></figure>
+      <figure class="hf" id="ai-flow" aria-label="An animated walkthrough: a flow for AES encryption is described in the AI panel, assembled on the canvas, run, and its result read in the inspector">
+        <div class="hf-stage">
+          <div class="hf-bar">
+            <span class="hf-dots"><i></i><i></i><i></i></span>
+            <span class="hf-title">Flow</span>
+            <span class="hf-start">▷ Start</span>
+          </div>
+          <aside class="hf-ai hf-side">
+            <div class="hf-ai-h">AI</div>
+            <div class="hf-ai-log">
+              <div class="hf-ai-you"><span class="hf-ai-tag you">YOU</span><p class="hf-ai-said"></p></div>
+              <div class="hf-ai-bot"><span class="hf-ai-tag bot">CLAUDE</span><div class="hf-ai-lines"></div></div>
+            </div>
+            <div class="hf-ai-input"><span class="hf-ai-field"></span><span class="hf-ai-send">↑</span></div>
+          </aside>
+          <div class="hf-canvas">
+            <svg class="hf-wires"></svg>
+            <div class="hf-nodes"></div>
+          </div>
+          <div class="hf-foot"><span class="hf-hint"></span><span class="hf-count"></span></div>
+          <aside class="hf-insp">
+            <h6><span class="hf-sq" style="width:9px;height:9px;border-radius:2px;background:#4fa3ff"></span>flow.output</h6>
+            <div class="hf-lab">NAME</div>
+            <div class="hf-field">ciphertext</div>
+            <div class="hf-lab">RESULT</div>
+            <div class="hf-field">rC0EtKmPJGVRUgvFBlVWdw==</div>
+          </aside>
+          <div class="hf-cursor"><svg viewBox="0 0 18 18" width="18" height="18"><path d="M2 2 L2 14 L5.6 10.6 L8.2 16 L10.6 14.8 L8 9.6 L13 9.6 Z" fill="#fff" stroke="#0b0d12" stroke-width="1.1" stroke-linejoin="round"/></svg></div>
+        </div>
+        <noscript><img src="ai.png" alt="The AI panel building an AES encryption flow from a one-line request, with the finished node graph on the canvas" style="width:100%;display:block"></noscript>
+      </figure>
     </div>
   </section>
 
@@ -998,205 +1065,152 @@
 
   <script>
   (function () {
-    var box = document.getElementById('hero-flow');
-    if (!box) return;
-    var stage = box.querySelector('.hf-stage');
-    var panel = document.getElementById('hf-panel');
-    var canvas = box.querySelector('.hf-canvas');
-    var svg = box.querySelector('.hf-wires');
-    var layer = box.querySelector('.hf-nodes');
-    var cursor = document.getElementById('hf-cursor');
-    var ghost = document.getElementById('hf-ghost');
-    var insp = document.getElementById('hf-insp');
-    var startBtn = document.getElementById('hf-start');
-    var hintEl = document.getElementById('hf-hint');
-    var countEl = document.getElementById('hf-count');
+    /* ── a canvas that can act: shared by the hero and the AI walkthrough ── */
+    function makeStage(box, cfg) {
+      var q = function (sel) { return box.querySelector(sel); };
+      var stage = q('.hf-stage'), canvas = q('.hf-canvas'), svg = q('.hf-wires'),
+          layer = q('.hf-nodes'), cursor = q('.hf-cursor'), ghost = q('.hf-ghost'),
+          insp = q('.hf-insp'), startBtn = q('.hf-start'), foot = q('.hf-foot'),
+          panel = q('.hf-side'), hintEl = q('.hf-hint'), countEl = q('.hf-count');
 
-    var TOP = 40;
-    /* two layouts: side by side on a wide screen, stacked on a phone */
-    var LAYOUTS = {
-      wide:    { w: 940, h: 430, panel: 150, insp: 186, pos: [[36, 112], [236, 112], [436, 112]] },
-      compact: { w: 400, h: 360, panel: 100, insp: 130, pos: [[6, 6], [6, 107], [6, 208]] }
-    };
-    var L = LAYOUTS.wide, PANEL = L.panel, W = L.w;
-    var YELLOW = '#f2c94c', BLUE = '#4fa3ff', PURPLE = '#b07bff';
+      var L = cfg.layouts.wide, gen = 0, timers = [], frames = [];
+      var placed = [], wires = [], sts = {}, counts = [0, 0], hint = null, started = false;
 
-    var PALETTE = [
-      { cat: 'INPUTS', ko: '입력' }, { key: 'input', name: 'Input', color: YELLOW, io: '0→1' },
-      { cat: 'OUTPUTS', ko: '출력' }, { key: 'output', name: 'Output', color: BLUE, io: '1→0' },
-      { cat: 'CRYPTO', ko: '암호' }, { key: 'hash', name: 'Hash', color: PURPLE, io: '1→1' },
-      { cat: 'OTHER', ko: '기타' },
-      { key: 'base64', name: 'Base64', color: PURPLE, io: '1→1' },
-      { key: 'json', name: 'JSON', color: PURPLE, io: '1→1' },
-      { key: 'merge', name: 'Merge', color: PURPLE, io: '2→1' }
-    ];
-    panel.innerHTML = PALETTE.map(function (p) {
-      if (p.cat) return '<div class="hf-cat"><span lang-en>' + p.cat + '</span><span lang-ko>' + p.ko + '</span></div>';
-      return '<div class="hf-item" data-key="' + p.key + '">' +
-        '<span class="hf-sq" style="background:' + p.color + '"></span>' + p.name +
-        '<span class="hf-io">' + p.io + '</span></div>';
-    }).join('');
+      function ko() { return document.documentElement.getAttribute('data-lang') === 'ko'; }
+      function paint() {
+        if (hint && hintEl) hintEl.textContent = hint[ko() ? 1 : 0];
+        if (countEl) countEl.textContent = ko()
+          ? ('모듈 ' + counts[0] + '개 · 연결 ' + counts[1] + '개')
+          : (counts[0] + ' modules · ' + counts[1] + ' connections');
+      }
+      document.querySelectorAll('[data-lang-btn]').forEach(function (b) { b.addEventListener('click', paint); });
 
-    var PLAN = [
-      { key: 'input',  name: 'Input',  color: YELLOW, x: 36,  y: 112, ins: [], outs: ['out'] },
-      { key: 'base64', name: 'Base64', color: PURPLE, x: 236, y: 112, ins: ['in'], outs: ['out'] },
-      { key: 'output', name: 'Output', color: BLUE,   x: 436, y: 112, ins: ['in'], outs: [] }
-    ];
-    var LINKS = [[0, 'out', 1, 'in'], [1, 'out', 2, 'in']];
+      function scale() { return stage.getBoundingClientRect().width / L.w; }
+      function apply(next) {
+        L = next;
+        stage.style.width = L.w + 'px';
+        stage.style.height = L.h + 'px';
+        if (panel) panel.style.width = L.panel + 'px';
+        canvas.style.left = L.panel + 'px';
+        if (insp) insp.style.width = L.insp + 'px';
+        if (foot) foot.style.left = L.panel + 'px';
+        cfg.plan.forEach(function (n, i) { n.x = L.pos[i][0]; n.y = L.pos[i][1]; });
+        if (cfg.onLayout) cfg.onLayout(L);
+      }
+      function fit() {
+        var next = box.clientWidth < (cfg.breakpoint || 620) ? cfg.layouts.compact : cfg.layouts.wide;
+        var flipped = next !== L;
+        if (flipped) apply(next);
+        var s = box.clientWidth / L.w;
+        stage.style.transform = 'scale(' + s + ')';
+        box.style.height = Math.round(L.h * s) + 'px';
+        renderNodes();
+        if (flipped && started) restart();
+      }
 
-    var HINTS = {
-      drag:    ['drag a module onto the canvas', '모듈을 캔버스로 끌어다 놓고'],
-      wire:    ['wire out → in', 'out → in 으로 연결하고'],
-      run:     ['press Start', '실행을 누르면'],
-      result:  ['read the result', '결과를 확인합니다']
-    };
-    var hint = 'drag', counts = [0, 0];
-    function paint() {
-      var ko = document.documentElement.getAttribute('data-lang') === 'ko';
-      hintEl.textContent = HINTS[hint][ko ? 1 : 0];
-      countEl.textContent = ko ? ('모듈 ' + counts[0] + '개 · 연결 ' + counts[1] + '개')
-                               : (counts[0] + ' modules · ' + counts[1] + ' connections');
-    }
-    document.querySelectorAll('[data-lang-btn]').forEach(function (b) { b.addEventListener('click', paint); });
-
-    function scale() { return stage.getBoundingClientRect().width / L.w; }
-    function apply(next) {
-      L = next; PANEL = L.panel; W = L.w;
-      stage.style.width = L.w + 'px';
-      stage.style.height = L.h + 'px';
-      panel.style.width = L.panel + 'px';
-      canvas.style.left = L.panel + 'px';
-      insp.style.width = L.insp + 'px';
-      box.querySelector('.hf-foot').style.left = L.panel + 'px';
-      PLAN.forEach(function (n, i) { n.x = L.pos[i][0]; n.y = L.pos[i][1]; });
-    }
-    function fit() {
-      var next = box.clientWidth < 620 ? LAYOUTS.compact : LAYOUTS.wide;
-      var flipped = next !== L;
-      if (flipped) apply(next);
-      var s = box.clientWidth / L.w;
-      stage.style.transform = 'scale(' + s + ')';
-      box.style.height = Math.round(L.h * s) + 'px';
-      renderNodes();
-      if (flipped && started) story();
-    }
-
-    /* positions, in canvas-local units */
-    function rectIn(el, host) {
-      var r = el.getBoundingClientRect(), h = host.getBoundingClientRect(), s = scale();
-      return { x: (r.left - h.left) / s, y: (r.top - h.top) / s, w: r.width / s, h: r.height / s };
-    }
-    function dotPos(i, port, dir) {
-      var el = layer.querySelector('[data-dot="' + i + '.' + port + '.' + dir + '"]');
-      if (!el) return { x: 0, y: 0 };
-      var r = rectIn(el, canvas);
-      return { x: r.x + r.w / 2, y: r.y + r.h / 2 };
-    }
-
-    var placed = [], wires = [], sts = {};
-    function renderNodes() {
-      layer.innerHTML = placed.map(function (i) {
-        var n = PLAN[i];
-        var ins = n.ins.map(function (p) {
-          return '<div class="hf-p"><span class="hf-dot" data-dot="' + i + '.' + p + '.in"></span>' + p + '</div>';
+      function rectIn(el, host) {
+        var r = el.getBoundingClientRect(), h = host.getBoundingClientRect(), s = scale();
+        return { x: (r.left - h.left) / s, y: (r.top - h.top) / s, w: r.width / s, h: r.height / s };
+      }
+      function dotPos(i, port, dir) {
+        var el = layer.querySelector('[data-dot="' + i + '.' + port + '.' + dir + '"]');
+        if (!el) return { x: 0, y: 0 };
+        var r = rectIn(el, canvas);
+        return { x: r.x + r.w / 2, y: r.y + r.h / 2 };
+      }
+      function renderNodes() {
+        layer.innerHTML = placed.map(function (i) {
+          var n = cfg.plan[i], s = sts[i] || ['', ''];
+          var ins = n.ins.map(function (p) {
+            return '<div class="hf-p"><span class="hf-dot" data-dot="' + i + '.' + p + '.in"></span>' + p + '</div>';
+          }).join('');
+          var outs = n.outs.map(function (p) {
+            return '<div class="hf-p">' + p + '<span class="hf-dot" data-dot="' + i + '.' + p + '.out"></span></div>';
+          }).join('');
+          return '<div class="hf-node" data-i="' + i + '" data-st="' + s[0] + '" style="left:' + n.x + 'px;top:' + n.y + 'px">' +
+            '<div class="hf-h"><span class="hf-sq" style="background:' + n.color + '"></span>' + n.name + '</div>' +
+            '<div class="hf-ports"><div class="hf-col in">' + ins + '</div><div class="hf-col out">' + outs + '</div></div>' +
+            '<div class="hf-st">' + s[1] + '</div></div>';
         }).join('');
-        var outs = n.outs.map(function (p) {
-          return '<div class="hf-p">' + p + '<span class="hf-dot" data-dot="' + i + '.' + p + '.out"></span></div>';
+        drawWires();
+      }
+      function curve(a, b) {
+        var dx = Math.max(34, Math.abs(b.x - a.x) / 2);
+        return 'M' + a.x + ' ' + a.y + ' C' + (a.x + dx) + ' ' + a.y + ', ' + (b.x - dx) + ' ' + b.y + ', ' + b.x + ' ' + b.y;
+      }
+      function drawWires(live) {
+        var out = wires.map(function (w) {
+          return '<path d="' + curve(dotPos(w[0], w[1], 'out'), dotPos(w[2], w[3], 'in')) + '"></path>';
         }).join('');
-        var s = sts[i] || ['', ''];
-        return '<div class="hf-node" data-i="' + i + '" data-st="' + s[0] + '" style="left:' + n.x + 'px;top:' + n.y + 'px">' +
-          '<div class="hf-h"><span class="hf-sq" style="background:' + n.color + '"></span>' + n.name + '</div>' +
-          '<div class="hf-ports"><div class="hf-col in">' + ins + '</div><div class="hf-col out">' + outs + '</div></div>' +
-          '<div class="hf-st">' + s[1] + '</div></div>';
-      }).join('');
-      drawWires();
-    }
-    function curve(a, b) {
-      var dx = Math.max(34, Math.abs(b.x - a.x) / 2);
-      return 'M' + a.x + ' ' + a.y + ' C' + (a.x + dx) + ' ' + a.y + ', ' + (b.x - dx) + ' ' + b.y + ', ' + b.x + ' ' + b.y;
-    }
-    function drawWires(live) {
-      var out = wires.map(function (w) {
-        return '<path d="' + curve(dotPos(w[0], w[1], 'out'), dotPos(w[2], w[3], 'in')) + '"></path>';
-      }).join('');
-      if (live) out += '<path class="live" d="' + curve(live.a, live.b) + '"></path>';
-      out += '<circle class="packet" r="0"></circle>';
-      svg.innerHTML = out;
-    }
-    function status(i, st, text) {
-      sts[i] = [st, text || ''];
-      var el = layer.querySelector('.hf-node[data-i="' + i + '"]');
-      if (!el) return;
-      el.setAttribute('data-st', st);
-      el.querySelector('.hf-st').textContent = text || '';
-    }
+        if (live) out += '<path class="live" d="' + curve(live.a, live.b) + '"></path>';
+        out += '<circle class="packet" r="0"></circle>';
+        svg.innerHTML = out;
+      }
+      function status(i, st, text) {
+        sts[i] = [st, text || ''];
+        var el = layer.querySelector('.hf-node[data-i="' + i + '"]');
+        if (!el) return;
+        el.setAttribute('data-st', st);
+        el.querySelector('.hf-st').textContent = text || '';
+      }
 
-    /* ── tiny animation runtime ──────────────────────────── */
-    var gen = 0, timers = [];
-    function alive(g) { return g === gen; }
-    function wait(ms, g) {
-      return new Promise(function (res) { timers.push(setTimeout(function () { if (alive(g)) res(); }, ms)); });
-    }
-    function ease(k) { return k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; }
-    function tween(dur, g, step) {
-      return new Promise(function (res) {
-        var t0 = null;
-        function frame(t) {
-          if (!alive(g)) return res();
-          if (t0 === null) t0 = t;
-          var k = Math.min(1, (t - t0) / dur);
-          step(ease(k));
-          if (k < 1) requestAnimationFrame(frame); else res();
-        }
-        requestAnimationFrame(frame);
-      });
-    }
+      /* runtime */
+      function alive(g) { return g === gen; }
+      function wait(ms, g) {
+        return new Promise(function (res) { timers.push(setTimeout(function () { if (alive(g)) res(); }, ms)); });
+      }
+      function ease(k) { return k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; }
+      function tween(dur, g, step) {
+        return new Promise(function (res) {
+          var t0 = null;
+          function frame(t) {
+            if (!alive(g)) return res();
+            if (t0 === null) t0 = t;
+            var k = Math.min(1, (t - t0) / dur);
+            step(ease(k));
+            if (k < 1) frames.push(requestAnimationFrame(frame)); else res();
+          }
+          frames.push(requestAnimationFrame(frame));
+        });
+      }
 
-    var at = { x: 120, y: 300 };   /* cursor, in stage units */
-    function place(x, y) {
-      at = { x: x, y: y };
-      cursor.style.transform = 'translate(' + x + 'px,' + y + 'px)';
-      ghost.style.transform = 'translate(' + (x + 12) + 'px,' + (y + 12) + 'px)';
-    }
-    function moveTo(x, y, dur, g, onStep) {
-      var from = { x: at.x, y: at.y };
-      return tween(dur, g, function (k) {
-        place(from.x + (x - from.x) * k, from.y + (y - from.y) * k);
-        if (onStep) onStep();
-      });
-    }
-    function packet(w, dur, g) {
-      var path = svg.querySelector('path:nth-of-type(' + (w + 1) + ')');
-      var dot = svg.querySelector('circle.packet');
-      if (!path || !dot) return Promise.resolve();
-      var len = path.getTotalLength();
-      dot.setAttribute('r', 4);
-      return tween(dur, g, function (k) {
-        var p = path.getPointAtLength(len * k);
-        dot.setAttribute('cx', p.x); dot.setAttribute('cy', p.y);
-      }).then(function () { dot.setAttribute('r', 0); });
-    }
-
-    /* ── the walkthrough ─────────────────────────────────── */
-    function dragModule(i, g) {
-      var n = PLAN[i];
-      var item = panel.querySelector('[data-key="' + n.key + '"]');
-      var r = rectIn(item, stage);
-      return moveTo(r.x + 30, r.y + 8, 620, g).then(function () {
-        if (!alive(g)) return;
-        item.classList.add('hot');
+      var at = { x: 120, y: 300 };
+      function place(x, y) {
+        at = { x: x, y: y };
+        cursor.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+        if (ghost) ghost.style.transform = 'translate(' + (x + 12) + 'px,' + (y + 12) + 'px)';
+      }
+      function moveTo(x, y, dur, g, onStep) {
+        var from = { x: at.x, y: at.y };
+        return tween(dur, g, function (k) {
+          place(from.x + (x - from.x) * k, from.y + (y - from.y) * k);
+          if (onStep) onStep();
+        });
+      }
+      function click(el, g, hold) {
         cursor.classList.add('press');
-        ghost.innerHTML = '<span class="hf-sq" style="background:' + n.color + '"></span>' + n.name;
-        ghost.classList.add('on');
-        return wait(260, g);
-      }).then(function () {
-        if (!alive(g)) return;
-        return moveTo(PANEL + n.x + 34, TOP + n.y + 14, 900, g);
-      }).then(function () {
-        if (!alive(g)) return;
-        cursor.classList.remove('press');
-        ghost.classList.remove('on');
-        item.classList.remove('hot');
+        if (el) el.classList.add('press');
+        return wait(hold || 200, g).then(function () {
+          cursor.classList.remove('press');
+          if (el) el.classList.remove('press');
+        });
+      }
+      function moveToEl(el, g, dur, dx, dy) {
+        var r = rectIn(el, stage);
+        return moveTo(r.x + (dx == null ? r.w / 2 : dx), r.y + (dy == null ? r.h / 2 : dy), dur || 600, g);
+      }
+      function packet(w, dur, g) {
+        var path = svg.querySelector('path:nth-of-type(' + (w + 1) + ')');
+        var dot = svg.querySelector('circle.packet');
+        if (!path || !dot) return Promise.resolve();
+        var len = path.getTotalLength();
+        dot.setAttribute('r', 4);
+        return tween(dur, g, function (k) {
+          var p = path.getPointAtLength(len * k);
+          dot.setAttribute('cx', p.x); dot.setAttribute('cy', p.y);
+        }).then(function () { dot.setAttribute('r', 0); });
+      }
+      function addNode(i, g) {
         placed.push(i);
         counts[0] = placed.length;
         renderNodes(); paint();
@@ -1205,142 +1219,353 @@
           fresh.classList.add('new');
           timers.push(setTimeout(function () { fresh.classList.remove('new'); }, 320));
         }
-        return wait(260, g);
-      });
-    }
-
-    function connect(link, g) {
-      var a = dotPos(link[0], link[1], 'out'), b = dotPos(link[2], link[3], 'in');
-      return moveTo(PANEL + a.x, TOP + a.y, 520, g).then(function () {
-        if (!alive(g)) return;
-        cursor.classList.add('press');
-        return moveTo(PANEL + b.x, TOP + b.y, 760, g, function () {
-          drawWires({ a: a, b: { x: at.x - PANEL, y: at.y - TOP } });
-        });
-      }).then(function () {
-        if (!alive(g)) return;
-        cursor.classList.remove('press');
+        return wait(160, g);
+      }
+      function addWire(link, g, grow) {
         wires.push(link);
         counts[1] = wires.length;
         drawWires(); paint();
-        return wait(240, g);
+        if (!grow) return Promise.resolve();
+        var path = svg.querySelector('path:nth-of-type(' + wires.length + ')');
+        if (!path) return Promise.resolve();
+        var len = path.getTotalLength();
+        path.style.strokeDasharray = len;
+        path.style.strokeDashoffset = len;
+        return tween(grow, g, function (k) { path.style.strokeDashoffset = len * (1 - k); })
+          .then(function () { path.style.strokeDasharray = ''; path.style.strokeDashoffset = ''; });
+      }
+      function clear() {
+        placed = []; wires = []; sts = {}; counts = [0, 0];
+        if (insp) insp.classList.remove('on');
+        layer.innerHTML = ''; drawWires();
+        paint();
+      }
+
+      function restart() {
+        var g = ++gen;
+        timers.forEach(clearTimeout); timers = [];
+        frames.forEach(cancelAnimationFrame); frames = [];
+        clear();
+        if (cfg.reset) cfg.reset();
+        cfg.story(api, g).then(function () { if (alive(g)) restart(); });
+        return g;
+      }
+      function stop() {
+        gen++;
+        timers.forEach(clearTimeout); timers = [];
+        frames.forEach(cancelAnimationFrame); frames = [];
+      }
+
+      var api = {
+        box: box, stage: stage, canvas: canvas, panel: panel, insp: insp, start: startBtn, layer: layer,
+        get L() { return L; },
+        plan: cfg.plan, alive: alive, wait: wait, tween: tween, moveTo: moveTo, moveToEl: moveToEl,
+        click: click, place: place, packet: packet, addNode: addNode, addWire: addWire,
+        status: status, dotPos: dotPos, drawWires: drawWires, render: renderNodes, rectIn: rectIn,
+        cursor: cursor, ghost: ghost, timers: timers,
+        setHint: function (en, k) { hint = [en, k]; paint(); },
+        counts: counts, paint: paint, showResult: function () { if (insp) insp.classList.add('on'); }
+      };
+
+      apply(cfg.layouts.wide);
+      fit();
+      window.addEventListener('resize', fit);
+
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        if (cfg.still) cfg.still(api);
+        return api;
+      }
+
+      var playing = false, inView = false;
+      function watch(on) {
+        if (on && !playing) { playing = true; started = true; restart(); }
+        else if (!on && playing) { playing = false; stop(); }
+      }
+      /* the tweens run on animation frames, which a hidden tab stops delivering,
+         so coming back starts the walkthrough over rather than resuming a run
+         that was cut off halfway */
+      function onView() { if (inView) { watch(false); watch(true); } else watch(false); }
+      if (window.IntersectionObserver) {
+        new IntersectionObserver(function (es) {
+          es.forEach(function (e) { inView = e.isIntersecting; });
+          onView();
+        }, { threshold: .25 }).observe(box);
+      } else {
+        inView = true; onView();
+      }
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) watch(false); else onView();
+      });
+      return api;
+    }
+
+    var YELLOW = '#f2c94c', BLUE = '#4fa3ff', PURPLE = '#b07bff';
+
+    /* ── hero: build it by hand ──────────────────────────── */
+    var heroBox = document.getElementById('hero-flow');
+    if (heroBox) {
+      var PALETTE = [
+        { cat: 'INPUTS', ko: '입력' }, { key: 'input', name: 'Input', color: YELLOW, io: '0→1' },
+        { cat: 'OUTPUTS', ko: '출력' }, { key: 'output', name: 'Output', color: BLUE, io: '1→0' },
+        { cat: 'CRYPTO', ko: '암호' }, { key: 'hash', name: 'Hash', color: PURPLE, io: '1→1' },
+        { cat: 'OTHER', ko: '기타' },
+        { key: 'base64', name: 'Base64', color: PURPLE, io: '1→1' },
+        { key: 'json', name: 'JSON', color: PURPLE, io: '1→1' },
+        { key: 'merge', name: 'Merge', color: PURPLE, io: '2→1' }
+      ];
+      heroBox.querySelector('.hf-side').innerHTML = PALETTE.map(function (p) {
+        if (p.cat) return '<div class="hf-cat"><span lang-en>' + p.cat + '</span><span lang-ko>' + p.ko + '</span></div>';
+        return '<div class="hf-item" data-key="' + p.key + '">' +
+          '<span class="hf-sq" style="background:' + p.color + '"></span>' + p.name +
+          '<span class="hf-io">' + p.io + '</span></div>';
+      }).join('');
+
+      var HERO_PLAN = [
+        { key: 'input',  name: 'Input',  color: YELLOW, x: 0, y: 0, ins: [], outs: ['out'] },
+        { key: 'base64', name: 'Base64', color: PURPLE, x: 0, y: 0, ins: ['in'], outs: ['out'] },
+        { key: 'output', name: 'Output', color: BLUE,   x: 0, y: 0, ins: ['in'], outs: [] }
+      ];
+      var HERO_LINKS = [[0, 'out', 1, 'in'], [1, 'out', 2, 'in']];
+
+      makeStage(heroBox, {
+        plan: HERO_PLAN,
+        layouts: {
+          wide:    { w: 940, h: 430, panel: 150, insp: 186, pos: [[36, 112], [236, 112], [436, 112]] },
+          compact: { w: 400, h: 360, panel: 100, insp: 130, pos: [[6, 6], [6, 107], [6, 208]] }
+        },
+        still: function (a) {
+          [0, 1, 2].forEach(function (i) { a.addNode(i, -1); });
+          HERO_LINKS.forEach(function (l) { a.addWire(l, -1); });
+          [0, 1, 2].forEach(function (i) { a.status(i, 'done', 'done'); });
+          a.setHint('read the result', '결과를 확인합니다');
+          a.showResult();
+          a.place(-40, -40);
+        },
+        reset: function () { },
+        story: function (a, g) {
+          var L = a.L, PANEL = L.panel, TOP = 40;
+          a.setHint('drag a module onto the canvas', '모듈을 캔버스로 끌어다 놓고');
+          a.place(120, 300);
+
+          function dragModule(i) {
+            var n = a.plan[i];
+            var item = a.panel.querySelector('[data-key="' + n.key + '"]');
+            return a.moveToEl(item, g, 620, 30, 8).then(function () {
+              if (!a.alive(g)) return;
+              item.classList.add('hot');
+              a.cursor.classList.add('press');
+              a.ghost.innerHTML = '<span class="hf-sq" style="background:' + n.color + '"></span>' + n.name;
+              a.ghost.classList.add('on');
+              return a.wait(260, g);
+            }).then(function () {
+              if (!a.alive(g)) return;
+              return a.moveTo(PANEL + n.x + 34, TOP + n.y + 14, 900, g);
+            }).then(function () {
+              if (!a.alive(g)) return;
+              a.cursor.classList.remove('press');
+              a.ghost.classList.remove('on');
+              item.classList.remove('hot');
+              return a.addNode(i, g).then(function () { return a.wait(160, g); });
+            });
+          }
+          function connect(link) {
+            var from = a.dotPos(link[0], link[1], 'out'), to = a.dotPos(link[2], link[3], 'in');
+            return a.moveTo(PANEL + from.x, TOP + from.y, 520, g).then(function () {
+              if (!a.alive(g)) return;
+              a.cursor.classList.add('press');
+              return a.moveTo(PANEL + to.x, TOP + to.y, 760, g, function () {
+                var r = a.rectIn(a.cursor, a.canvas);
+                a.drawWires({ a: from, b: { x: r.x, y: r.y } });
+              });
+            }).then(function () {
+              if (!a.alive(g)) return;
+              a.cursor.classList.remove('press');
+              return a.addWire(link, g).then(function () { return a.wait(240, g); });
+            });
+          }
+
+          var chain = a.wait(600, g);
+          [0, 1, 2].forEach(function (i) { chain = chain.then(function () { return a.alive(g) && dragModule(i); }); });
+          chain = chain.then(function () {
+            if (!a.alive(g)) return;
+            a.setHint('wire out → in', 'out → in 으로 연결하고');
+            return a.wait(200, g);
+          });
+          HERO_LINKS.forEach(function (l) { chain = chain.then(function () { return a.alive(g) && connect(l); }); });
+          return chain.then(function () {
+            if (!a.alive(g)) return;
+            a.setHint('press Start', '실행을 누르면');
+            return a.moveToEl(a.start, g, 640);
+          }).then(function () { return a.alive(g) && a.click(a.start, g, 220); })
+            .then(function () { return a.alive(g) && runThree(a, g, HERO_LINKS.length); })
+            .then(function () {
+              if (!a.alive(g)) return;
+              a.setHint('read the result', '결과를 확인합니다');
+              var n = a.plan[2];
+              return a.moveTo(a.L.panel + n.x + 60, 40 + n.y + 14, 560, g);
+            }).then(function () { return a.alive(g) && a.click(null, g, 200); })
+            .then(function () {
+              if (!a.alive(g)) return;
+              a.showResult();
+              return a.wait(2600, g);
+            });
+        }
       });
     }
 
-    function runFlow(g) {
-      var r = rectIn(startBtn, stage);
-      hint = 'run'; paint();
-      return moveTo(r.x + r.w / 2, r.y + r.h / 2, 640, g).then(function () {
-        if (!alive(g)) return;
-        cursor.classList.add('press'); startBtn.classList.add('press');
-        return wait(220, g);
-      }).then(function () {
-        if (!alive(g)) return;
-        cursor.classList.remove('press'); startBtn.classList.remove('press');
-        status(0, 'running', 'running…');
-        return wait(460, g);
-      }).then(function () {
-        if (!alive(g)) return;
-        status(0, 'done', 'done');
-        return packet(0, 820, g);
-      }).then(function () {
-        if (!alive(g)) return;
-        status(1, 'running', 'running…');
-        return wait(640, g);
-      }).then(function () {
-        if (!alive(g)) return;
-        status(1, 'done', 'done');
-        return packet(1, 820, g);
-      }).then(function () {
-        if (!alive(g)) return;
-        status(2, 'running', 'running…');
-        return wait(420, g);
-      }).then(function () {
-        if (!alive(g)) return;
-        status(2, 'done', 'done');
-        return wait(240, g);
-      });
-    }
-
-    function readResult(g) {
-      hint = 'result'; paint();
-      var n = PLAN[2];
-      return moveTo(PANEL + n.x + 60, TOP + n.y + 14, 560, g).then(function () {
-        if (!alive(g)) return;
-        cursor.classList.add('press');
-        return wait(200, g);
-      }).then(function () {
-        if (!alive(g)) return;
-        cursor.classList.remove('press');
-        insp.classList.add('on');
-        return wait(2600, g);
-      });
-    }
-
-    function clear() {
-      placed = []; wires = []; sts = {}; counts = [0, 0];
-      insp.classList.remove('on');
-      layer.innerHTML = ''; drawWires();
-      hint = 'drag'; paint();
-      place(120, 300);
-    }
-
-    function story() {
-      var g = ++gen;
-      timers.forEach(clearTimeout); timers = [];
-      clear();
-      var chain = wait(600, g);
+    function runThree(a, g, links) {
+      var chain = Promise.resolve();
       [0, 1, 2].forEach(function (i) {
-        chain = chain.then(function () { return alive(g) && dragModule(i, g); });
+        chain = chain.then(function () {
+          if (!a.alive(g)) return;
+          a.status(i, 'running', 'running…');
+          return a.wait(i === 2 ? 420 : 520, g);
+        }).then(function () {
+          if (!a.alive(g)) return;
+          a.status(i, 'done', 'done');
+          return i < links ? a.packet(i, 820, g) : a.wait(240, g);
+        });
       });
-      chain = chain.then(function () { if (!alive(g)) return; hint = 'wire'; paint(); return wait(200, g); });
-      LINKS.forEach(function (l) {
-        chain = chain.then(function () { return alive(g) && connect(l, g); });
+      return chain;
+    }
+
+    /* ── AI: ask for it instead ──────────────────────────── */
+    var aiBox = document.getElementById('ai-flow');
+    if (aiBox) {
+      var PROMPT = 'Create a flow for encrypting a message using AES';
+      var REPLY = [
+        'Created and opened <b>aes-encrypt.flow</b>:',
+        '• <b>message</b> (input) → <b>Cipher</b> (AES-256, CBC)',
+        '• <b>Key Generator</b> feeds the cipher’s key',
+        '• the encrypted bytes land in <b>ciphertext</b>'
+      ];
+      var AI_PLAN = [
+        { name: 'message',       color: YELLOW, x: 0, y: 0, ins: [], outs: ['out'] },
+        { name: 'Key Generator', color: PURPLE, x: 0, y: 0, ins: [], outs: ['out'] },
+        { name: 'Cipher',        color: PURPLE, x: 0, y: 0, ins: ['in', 'key'], outs: ['out'] },
+        { name: 'ciphertext',    color: BLUE,   x: 0, y: 0, ins: ['in'], outs: [] }
+      ];
+      var AI_LINKS = [[0, 'out', 2, 'in'], [1, 'out', 2, 'key'], [2, 'out', 3, 'in']];
+      var log = aiBox.querySelector('.hf-ai-log');
+      var field = aiBox.querySelector('.hf-ai-field');
+      var youRow = aiBox.querySelector('.hf-ai-you');
+      var youText = aiBox.querySelector('.hf-ai-said');
+      var botRow = aiBox.querySelector('.hf-ai-bot');
+      var lines = aiBox.querySelector('.hf-ai-lines');
+      var send = aiBox.querySelector('.hf-ai-send');
+
+      function aiReset() {
+        field.textContent = '';
+        youText.textContent = '';
+        youRow.classList.remove('on');
+        botRow.classList.remove('on');
+        lines.innerHTML = '';
+        log.scrollTop = 0;
+      }
+
+      makeStage(aiBox, {
+        plan: AI_PLAN,
+        breakpoint: 640,
+        layouts: {
+          wide:    { w: 940, h: 430, panel: 240, insp: 160, pos: [[10, 16], [10, 122], [190, 62], [370, 62]] },
+          compact: { w: 420, h: 470, panel: 132, insp: 120, pos: [[4, 8], [4, 104], [4, 200], [4, 296]] }
+        },
+        reset: aiReset,
+        still: function (a) {
+          youRow.classList.add('on'); youText.textContent = PROMPT;
+          botRow.classList.add('on');
+          lines.innerHTML = REPLY.map(function (t) { return '<p>' + t + '</p>'; }).join('');
+          AI_PLAN.forEach(function (n, i) { a.addNode(i, -1); });
+          AI_LINKS.forEach(function (l) { a.addWire(l, -1); });
+          [0, 1, 2, 3].forEach(function (i) { a.status(i, 'done', 'done'); });
+          a.setHint('AI builds it, you keep editing', 'AI가 만들고, 손은 계속 댈 수 있습니다');
+          a.showResult();
+          a.place(-40, -40);
+        },
+        story: function (a, g) {
+          a.setHint('describe the flow you want', '원하는 흐름을 말로 설명하면');
+          a.place(120, 320);
+
+          function type(el, text, per) {
+            var i = 0;
+            return a.tween(text.length * per, g, function (k) {
+              var n = Math.round(text.length * k);
+              if (n !== i) { i = n; el.textContent = text.slice(0, n); }
+            });
+          }
+
+          return a.moveToEl(field, g, 700).then(function () { return a.alive(g) && a.click(null, g, 180); })
+            .then(function () { return a.alive(g) && type(field, PROMPT, 34); })
+            .then(function () { return a.alive(g) && a.moveToEl(send, g, 420); })
+            .then(function () { return a.alive(g) && a.click(send, g, 200); })
+            .then(function () {
+              if (!a.alive(g)) return;
+              field.textContent = '';
+              youText.textContent = PROMPT;
+              youRow.classList.add('on');
+              log.scrollTop = log.scrollHeight;
+              a.setHint('AI assembles the flow', 'AI가 Flow를 구성합니다');
+              return a.wait(520, g);
+            }).then(function () {
+              if (!a.alive(g)) return;
+              botRow.classList.add('on');
+              var chain = Promise.resolve();
+              REPLY.forEach(function (html, idx) {
+                chain = chain.then(function () {
+                  if (!a.alive(g)) return;
+                  var p = document.createElement('p');
+                  p.innerHTML = html;
+                  lines.appendChild(p);
+                  requestAnimationFrame(function () { p.classList.add('on'); log.scrollTop = log.scrollHeight; });
+                  if (idx === 0) return a.wait(420, g);
+                  return a.addNode(idx - 1, g).then(function () {
+                    if (idx === 3) return a.addNode(3, g);
+                  }).then(function () { return a.wait(260, g); });
+                });
+              });
+              return chain;
+            }).then(function () {
+              if (!a.alive(g)) return;
+              var chain = Promise.resolve();
+              AI_LINKS.forEach(function (l) {
+                chain = chain.then(function () { return a.alive(g) && a.addWire(l, g, 420); });
+              });
+              return chain;
+            }).then(function () {
+              if (!a.alive(g)) return;
+              a.setHint('run it as it is', '그대로 실행하면');
+              return a.moveToEl(a.start, g, 620);
+            }).then(function () { return a.alive(g) && a.click(a.start, g, 220); })
+            .then(function () {
+              if (!a.alive(g)) return;
+              var order = [[0, 0], [1, 1], [2, 2], [3, null]];
+              var chain = Promise.resolve();
+              order.forEach(function (step) {
+                chain = chain.then(function () {
+                  if (!a.alive(g)) return;
+                  a.status(step[0], 'running', 'running…');
+                  return a.wait(440, g);
+                }).then(function () {
+                  if (!a.alive(g)) return;
+                  a.status(step[0], 'done', 'done');
+                  return step[1] === null ? a.wait(200, g) : a.packet(step[1], 700, g);
+                });
+              });
+              return chain;
+            }).then(function () {
+              if (!a.alive(g)) return;
+              a.setHint('read the result', '결과를 확인합니다');
+              var n = a.plan[3];
+              return a.moveTo(a.L.panel + n.x + 60, 40 + n.y + 14, 520, g);
+            }).then(function () { return a.alive(g) && a.click(null, g, 200); })
+            .then(function () {
+              if (!a.alive(g)) return;
+              a.showResult();
+              return a.wait(2800, g);
+            });
+        }
       });
-      return chain
-        .then(function () { return alive(g) && runFlow(g); })
-        .then(function () { return alive(g) && readResult(g); })
-        .then(function () { if (alive(g)) story(); });
     }
-
-    function finished() {
-      var g = ++gen;
-      timers.forEach(clearTimeout); timers = [];
-      placed = [0, 1, 2]; wires = LINKS.slice(); counts = [3, 2];
-      renderNodes(); paint();
-      [0, 1, 2].forEach(function (i) { status(i, 'done', 'done'); });
-      insp.classList.add('on');
-      place(-40, -40);
-    }
-
-    var started = false;
-    window.addEventListener('resize', fit);
-    apply(LAYOUTS.wide);
-    fit();
-
-    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (still) { finished(); return; }
-
-    var playing = false, inView = false;
-    function watch(on) {
-      if (on && !playing) { playing = true; started = true; story(); }
-      else if (!on && playing) { playing = false; gen++; timers.forEach(clearTimeout); timers = []; }
-    }
-    /* the tweens run on animation frames, which a hidden tab stops delivering,
-       so coming back starts the walkthrough over rather than resuming a run
-       that was cut off halfway */
-    function onView() { if (inView) { watch(false); watch(true); } else watch(false); }
-    if (window.IntersectionObserver) {
-      new IntersectionObserver(function (es) {
-        es.forEach(function (e) { inView = e.isIntersecting; });
-        onView();
-      }, { threshold: .25 }).observe(box);
-    } else {
-      inView = true; onView();
-    }
-    document.addEventListener('visibilitychange', function () {
-      if (document.hidden) watch(false); else onView();
-    });
   })();
   </script>
 
