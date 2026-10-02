@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#7A1F2B">
+    <meta name="description" content="가톨릭 성가 번호·제목 검색, 악보 보기, 음원 듣기">
+    <title>가톨릭 성가</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <script>
+        // 악보(sheet/NNN.jpg)·음원(mp3/NNN.mp3) URL 템플릿.
+        //   {path}    : URL 인코딩된 경로 (예: sheet%2F002.jpg) — Firebase Storage 다운로드 URL 용
+        //   {rawPath} : 그대로의 경로 (예: sheet/002.jpg) — 일반 정적 호스팅/CDN 용
+        // 악보는 fetch 로 읽으므로 스토리지에 이 사이트 origin 에 대한 CORS(GET) 설정이 필요하다.
+        // 로컬에서 media/ 폴더로 테스트하려면 URL 에 ?media=local 을 붙인다.
+        window.CHANT_MEDIA_URL = new URLSearchParams(location.search).get("media") === "local"
+            ? "media/{rawPath}"
+            : "https://firebasestorage.googleapis.com/v0/b/catholichymnal-c3c1a.firebasestorage.app/o/{path}?alt=media";
+    </script>
+    <style>
+        html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background: #FBF7F0; }
+        @media (prefers-color-scheme: dark) { html, body { background: #17110F; } }
+        #loading { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+                   gap: 16px; font-family: -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; color: #7A1F2B; }
+        #loading .spinner { width: 36px; height: 36px; border: 3px solid #E9D9C3; border-top-color: #7A1F2B; border-radius: 50%;
+                            animation: spin 0.9s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+    <script type="application/javascript" src="composeApp.js"></script>
+</head>
+<body>
+<div id="loading"><div class="spinner"></div><div>가톨릭 성가 불러오는 중…</div></div>
+</body>
+</html>
