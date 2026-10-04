@@ -121,7 +121,12 @@
   .touch { gap: 8px; touch-action: none; }
   .menu { grid-template-columns: 1fr 1fr; gap: 6px; }
 
-  .touch button, .menu button {
+  /* The controls are labels around a hidden switch: on iOS a person's own
+     tap on one plays the system haptic, which a script's click does not */
+  .key {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex: 1;
     font: inherit;
     color: var(--text);
@@ -131,9 +136,10 @@
     -webkit-touch-callout: none;
   }
 
-  .touch button { padding: 16px 0; font-size: 20px; }
-  .menu button { padding: 8px 0; font-size: 12px; background: var(--grid); }
-  .touch button:active, .menu button:active { background: var(--grid); filter: brightness(1.4); }
+  .key input { display: none; }
+  .touch .key { padding: 16px 0; font-size: 20px; }
+  .menu .key { padding: 8px 0; font-size: 12px; background: var(--grid); }
+  .key:active { background: var(--grid); filter: brightness(1.4); }
 
   /* Phones and narrow windows: everything on one screen, no scrolling.
      The board takes whatever height is left above the controls. */
@@ -204,8 +210,8 @@
         <kbd>P</kbd> pause &nbsp; <kbd>R</kbd> restart
       </div>
       <div class="menu">
-        <button data-key="pause" id="pause">Pause</button>
-        <button data-key="restart">New</button>
+        <label class="key" role="button" data-key="pause"><span id="pause">Pause</span><input type="checkbox" switch></label>
+        <label class="key" role="button" data-key="restart">New<input type="checkbox" switch></label>
       </div>
     </div>
 
@@ -220,11 +226,11 @@
 </main>
 
 <div class="touch">
-  <button data-key="left" aria-label="move left">&larr;</button>
-  <button data-key="rotate" aria-label="rotate">&#8635;</button>
-  <button data-key="soft" aria-label="soft drop">&darr;</button>
-  <button data-key="drop" aria-label="hard drop">&#8650;</button>
-  <button data-key="right" aria-label="move right">&rarr;</button>
+  <label class="key" role="button" data-key="left" aria-label="move left">&larr;<input type="checkbox" switch></label>
+  <label class="key" role="button" data-key="right" aria-label="move right">&rarr;<input type="checkbox" switch></label>
+  <label class="key" role="button" data-key="rotate" aria-label="rotate">&#8635;<input type="checkbox" switch></label>
+  <label class="key" role="button" data-key="soft" aria-label="soft drop">&darr;<input type="checkbox" switch></label>
+  <label class="key" role="button" data-key="drop" aria-label="hard drop">&#8650;<input type="checkbox" switch></label>
 </div>
 
 <script type="module" src="./app.js"></script>

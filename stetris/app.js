@@ -214,34 +214,18 @@ window.addEventListener('keydown', (event) => {
 });
 
 /**
- * A light tap on each press. Android has the Vibration API, which works
- * on touch down. iOS Safari has none, but since iOS 18 toggling a switch
- * checkbox plays the system haptic, the same tick as the keyboard. Safari
- * only allows that inside a real user gesture, and a touch's pointerdown
- * is not one, so on iOS the tick comes with touchend instead.
+ * A light tap on each press. Android has the Vibration API, which works on
+ * touch down. iOS Safari has none, so every control is a label around a
+ * hidden switch: tapping one plays the system haptic, the same tick as the
+ * keyboard. It has to be the person's own tap; a script clicking the switch
+ * stays silent on iOS 26.
  */
 const vibrate = navigator.vibrate ? () => navigator.vibrate(10) : () => {};
-
-const switchTick = (() => {
-  if (navigator.vibrate) {
-    return () => {};
-  }
-
-  const label = document.createElement('label');
-  label.setAttribute('aria-hidden', 'true');
-  label.style.display = 'none';
-  const input = document.createElement('input');
-  input.type = 'checkbox';
-  input.setAttribute('switch', '');
-  label.append(input);
-  document.body.append(label);
-  return () => label.click();
-})();
 
 /** Held down, these keep going the way a held key does. */
 const REPEATING = new Set(['left', 'right', 'soft']);
 
-for (const button of document.querySelectorAll('button[data-key]')) {
+for (const button of document.querySelectorAll('.key[data-key]')) {
   const action = button.dataset.key;
   let timer = 0;
 
@@ -258,16 +242,14 @@ for (const button of document.querySelectorAll('button[data-key]')) {
     }
   };
 
-  // On touch down rather than click, which only fires on release
-  button.addEventListener('pointerdown', (event) => {
-    event.preventDefault();
+  // On touch down rather than click, which only fires on release. No
+  // preventDefault: the tap has to go on to toggle the switch.
+  button.addEventListener('pointerdown', () => {
     stop();
     // Once per touch rather than per repeat, or a held button would buzz
     vibrate();
     press(180);
   });
-
-  button.addEventListener('touchend', switchTick);
 
   for (const type of ['pointerup', 'pointercancel', 'pointerleave']) {
     button.addEventListener(type, stop);
