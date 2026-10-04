@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Haptic test</title>
+<style>
+  :root { --bg: #0b0f1a; --panel: #141b2d; --text: #e8ecf6; --muted: #8892a8; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 16px;
+    background: var(--bg); color: var(--text);
+    font: 15px/1.4 -apple-system, system-ui, sans-serif;
+    -webkit-user-select: none; user-select: none;
+  }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  p { color: var(--muted); margin: 0 0 16px; font-size: 13px; }
+  .row {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--panel); border-radius: 10px;
+    padding: 12px; margin-bottom: 10px;
+  }
+  .row button, .row label.big {
+    flex: none; width: 64px; height: 48px;
+    font: inherit; font-size: 20px; font-weight: 600;
+    color: var(--text); background: #26314d;
+    border: 0; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    -webkit-touch-callout: none;
+  }
+  .desc { flex: 1; font-size: 13px; }
+  .count { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .touchnone { touch-action: none; }
+</style>
+</head>
+<body>
+<h1>진동 테스트</h1>
+<p>번호를 하나씩 눌러보고, 진동이 오는 번호를 알려주세요. 오른쪽 숫자가 올라가면 눌림은 인식된 것입니다.</p>
+
+<div class="row">
+  <input type="checkbox" switch id="v1">
+  <div class="desc"><b>1</b> 보이는 스위치를 직접 탭</div>
+  <span class="count" id="c1">0</span>
+</div>
+
+<div class="row">
+  <label class="big">2<input type="checkbox" switch style="display:none" id="v2"></label>
+  <div class="desc">숨긴 스위치를 감싼 label을 직접 탭</div>
+  <span class="count" id="c2">0</span>
+</div>
+
+<div class="row"><button id="b3">3</button>
+  <div class="desc">버튼 click → 숨긴 label.click()</div><span class="count" id="c3">0</span></div>
+
+<div class="row"><button id="b4">4</button>
+  <div class="desc">버튼 touchend → 숨긴 label.click()</div><span class="count" id="c4">0</span></div>
+
+<div class="row"><button id="b5">5</button>
+  <div class="desc">버튼 pointerdown → 숨긴 label.click()</div><span class="count" id="c5">0</span></div>
+
+<div class="row"><button id="b6">6</button>
+  <div class="desc">버튼 pointerup → 숨긴 label.click()</div><span class="count" id="c6">0</span></div>
+
+<div class="row"><button id="b7" class="touchnone">7</button>
+  <div class="desc">지금 게임과 같은 방식 (pointerdown 기본동작 막음 + touchend)</div><span class="count" id="c7">0</span></div>
+
+<div class="row"><button id="b8">8</button>
+  <div class="desc">버튼 click → 화면 밖에 둔 label.click()</div><span class="count" id="c8">0</span></div>
+
+<div class="row"><button id="b9">9</button>
+  <div class="desc">버튼 click → 스위치 input.click() 직접</div><span class="count" id="c9">0</span></div>
+
+<div class="row"><button id="b10">10</button>
+  <div class="desc">버튼 click → 매번 새로 만들어 click 후 제거</div><span class="count" id="c10">0</span></div>
+
+<script>
+  const bump = (n) => {
+    const el = document.getElementById('c' + n);
+    el.textContent = Number(el.textContent) + 1;
+  };
+
+  function makeSwitch(style) {
+    const label = document.createElement('label');
+    label.setAttribute('aria-hidden', 'true');
+    label.style.cssText = style;
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.setAttribute('switch', '');
+    label.append(input);
+    document.body.append(label);
+    return { label, input };
+  }
+
+  const hidden = makeSwitch('display:none');
+  const offscreen = makeSwitch('position:fixed;left:-9999px;opacity:0;pointer-events:none');
+
+  document.getElementById('v1').addEventListener('change', () => bump(1));
+  document.getElementById('v2').addEventListener('change', () => bump(2));
+
+  const on = (n, type, fn) => document.getElementById('b' + n).addEventListener(type, (e) => { fn(e); bump(n); });
+
+  on(3, 'click', () => hidden.label.click());
+  on(4, 'touchend', () => hidden.label.click());
+  on(5, 'pointerdown', () => hidden.label.click());
+  on(6, 'pointerup', () => hidden.label.click());
+
+  document.getElementById('b7').addEventListener('pointerdown', (e) => e.preventDefault());
+  on(7, 'touchend', () => hidden.label.click());
+
+  on(8, 'click', () => offscreen.label.click());
+  on(9, 'click', () => hidden.input.click());
+  on(10, 'click', () => {
+    const s = makeSwitch('display:none');
+    s.label.click();
+    s.label.remove();
+  });
+</script>
+</body>
+</html>
