@@ -116,38 +116,72 @@
   .source:hover { color: var(--text); }
   .source svg { flex: none; fill: currentColor; }
 
-  .touch {
-    display: none;
-    gap: 8px;
-  }
+  .touch, .menu { display: none; }
 
-  .touch button {
+  .touch { gap: 8px; touch-action: none; }
+  .menu { grid-template-columns: 1fr 1fr; gap: 6px; }
+
+  .touch button, .menu button {
     flex: 1;
-    padding: 14px 0;
     font: inherit;
-    font-size: 18px;
     color: var(--text);
     background: var(--panel);
     border: 0;
     border-radius: 10px;
+    -webkit-touch-callout: none;
   }
 
-  .touch button:active { background: var(--grid); }
+  .touch button { padding: 16px 0; font-size: 20px; }
+  .menu button { padding: 8px 0; font-size: 12px; background: var(--grid); }
+  .touch button:active, .menu button:active { background: var(--grid); filter: brightness(1.4); }
+
+  /* Phones and narrow windows: everything on one screen, no scrolling.
+     The board takes whatever height is left above the controls. */
+  @media (hover: none) and (pointer: coarse), (max-width: 560px) {
+    html, body { overflow: hidden; }
+
+    body {
+      height: 100dvh;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      padding:
+        max(10px, env(safe-area-inset-top))
+        max(10px, env(safe-area-inset-right))
+        max(10px, env(safe-area-inset-bottom))
+        max(10px, env(safe-area-inset-left));
+    }
+
+    main { flex: 1; min-height: 0; gap: 10px; align-items: stretch; }
+
+    .well {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    aside { width: 96px; min-width: 0; gap: 8px; }
+    .box { padding: 8px; }
+    .stats { grid-template-columns: 1fr; gap: 6px; }
+    .value { font-size: 17px; }
+    .keys, .source span { display: none; }
+    .source { justify-content: center; }
+  }
 
   @media (hover: none) and (pointer: coarse) {
     .touch { display: flex; }
-    .keys { display: none; }
-  }
-
-  @media (max-width: 560px) {
-    main { flex-direction: column; align-items: center; gap: 12px; }
-    aside { width: 100%; min-width: 0; }
+    .menu { display: grid; }
   }
 </style>
 </head>
 <body>
 <main>
-  <canvas id="board" width="300" height="600" aria-label="Stetris board"></canvas>
+  <div class="well">
+    <canvas id="board" width="300" height="600" aria-label="Stetris board"></canvas>
+  </div>
 
   <aside>
     <div class="box">
@@ -169,11 +203,9 @@
         <kbd>&darr;</kbd> soft drop &nbsp; <kbd>space</kbd> hard drop<br>
         <kbd>P</kbd> pause &nbsp; <kbd>R</kbd> restart
       </div>
-      <div class="touch">
-        <button data-key="left" aria-label="move left">&larr;</button>
-        <button data-key="rotate" aria-label="rotate">&#8635;</button>
-        <button data-key="right" aria-label="move right">&rarr;</button>
-        <button data-key="drop" aria-label="hard drop">&darr;&darr;</button>
+      <div class="menu">
+        <button data-key="pause" id="pause">Pause</button>
+        <button data-key="restart">New</button>
       </div>
     </div>
 
@@ -186,6 +218,14 @@
     </a>
   </aside>
 </main>
+
+<div class="touch">
+  <button data-key="left" aria-label="move left">&larr;</button>
+  <button data-key="right" aria-label="move right">&rarr;</button>
+  <button data-key="rotate" aria-label="rotate">&#8635;</button>
+  <button data-key="soft" aria-label="soft drop">&darr;</button>
+  <button data-key="drop" aria-label="hard drop">&#8650;</button>
+</div>
 
 <script type="module" src="./app.js"></script>
 </body>

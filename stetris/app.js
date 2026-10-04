@@ -33,7 +33,12 @@ const el = {
   level: document.getElementById('level'),
   lines: document.getElementById('lines'),
   state: document.getElementById('state'),
+  pause: document.getElementById('pause'),
 };
+
+/** The same queries as the stylesheet, kept in step with it. */
+const compactLayout = window.matchMedia('(hover: none) and (pointer: coarse), (max-width: 560px)');
+const touchOnly = window.matchMedia('(hover: none) and (pointer: coarse)');
 
 const play = new Play();
 
@@ -160,7 +165,7 @@ function render() {
   el.lines.textContent = play.lines;
 
   if (play.isGameOver) {
-    el.state.textContent = 'GAME OVER - press R';
+    el.state.textContent = touchOnly.matches ? 'GAME OVER' : 'GAME OVER - press R';
     el.state.dataset.state = 'gameover';
   } else if (play.isPaused) {
     el.state.textContent = 'PAUSED';
@@ -169,6 +174,8 @@ function render() {
     el.state.textContent = '';
     el.state.dataset.state = 'playing';
   }
+
+  el.pause.textContent = play.isPaused ? 'Resume' : 'Pause';
 }
 
 function newGame() {
@@ -206,23 +213,84 @@ window.addEventListener('keydown', (event) => {
   render();
 });
 
-for (const button of document.querySelectorAll('.touch button')) {
-  button.addEventListener('click', () => {
-    ACTIONS[button.dataset.key]();
+/**
+ * A light tap on each press. Android has the Vibration API; iOS Safari
+ * does not, but since iOS 18 toggling a switch checkbox plays the system
+ * haptic, the same tick as the keyboard, so a hidden one is toggled
+ * instead. Anything else stays silent.
+ */
+const haptic = (() => {
+  if (navigator.vibrate) {
+    return () => navigator.vibrate(10);
+  }
+
+  const label = document.createElement('label');
+  label.setAttribute('aria-hidden', 'true');
+  label.style.cssText = 'position:fixed;left:-9999px;opacity:0;pointer-events:none';
+  const input = document.createElement('input');
+  input.type = 'checkbox';
+  input.setAttribute('switch', '');
+  input.tabIndex = -1;
+  label.append(input);
+  document.body.append(label);
+  return () => label.click();
+})();
+
+/** Held down, these keep going the way a held key does. */
+const REPEATING = new Set(['left', 'right', 'soft']);
+
+for (const button of document.querySelectorAll('button[data-key]')) {
+  const action = button.dataset.key;
+  let timer = 0;
+
+  const stop = () => {
+    clearTimeout(timer);
+    timer = 0;
+  };
+
+  const press = (delay) => {
+    ACTIONS[action]();
     render();
+    if (REPEATING.has(action)) {
+      timer = setTimeout(press, delay, 50);
+    }
+  };
+
+  // On touch down rather than click, which only fires on release
+  button.addEventListener('pointerdown', (event) => {
+    event.preventDefault();
+    stop();
+    // Once per touch rather than per repeat, or a held button would buzz
+    haptic();
+    press(180);
   });
+
+  for (const type of ['pointerup', 'pointercancel', 'pointerleave']) {
+    button.addEventListener(type, stop);
+  }
 }
 
 function resize() {
-  // The board keeps its 1:2 ratio and fits the viewport
-  const height = Math.min(600, window.innerHeight - 40);
-  const width = Math.round(height / 2);
-  scaleForDisplay(boardCanvas, boardCtx, width, height);
-  scaleForDisplay(nextCanvas, nextCtx, 120, 120);
+  // Whole cells only, so the grid lines stay sharp. On a phone the board
+  // fills the space the stylesheet leaves it; elsewhere it fits the window.
+  const { xSize, ySize } = play.board;
+  let cell;
+  if (compactLayout.matches) {
+    const well = boardCanvas.parentElement;
+    cell = Math.min(well.clientWidth / xSize, well.clientHeight / ySize);
+  } else {
+    cell = (window.innerHeight - 40) / ySize;
+  }
+  cell = Math.max(8, Math.min(30, Math.floor(cell)));
+
+  scaleForDisplay(boardCanvas, boardCtx, cell * xSize, cell * ySize);
+  const next = compactLayout.matches ? 64 : 120;
+  scaleForDisplay(nextCanvas, nextCtx, next, next);
   render();
 }
 
 window.addEventListener('resize', resize);
+compactLayout.addEventListener('change', resize);
 
 let lastFrame = performance.now();
 
