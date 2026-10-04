@@ -214,23 +214,25 @@ window.addEventListener('keydown', (event) => {
 });
 
 /**
- * A light tap on each press. Android has the Vibration API; iOS Safari
- * does not, but since iOS 18 toggling a switch checkbox plays the system
- * haptic, the same tick as the keyboard, so a hidden one is toggled
- * instead. Anything else stays silent.
+ * A light tap on each press. Android has the Vibration API, which works
+ * on touch down. iOS Safari has none, but since iOS 18 toggling a switch
+ * checkbox plays the system haptic, the same tick as the keyboard. Safari
+ * only allows that inside a real user gesture, and a touch's pointerdown
+ * is not one, so on iOS the tick comes with touchend instead.
  */
-const haptic = (() => {
+const vibrate = navigator.vibrate ? () => navigator.vibrate(10) : () => {};
+
+const switchTick = (() => {
   if (navigator.vibrate) {
-    return () => navigator.vibrate(10);
+    return () => {};
   }
 
   const label = document.createElement('label');
   label.setAttribute('aria-hidden', 'true');
-  label.style.cssText = 'position:fixed;left:-9999px;opacity:0;pointer-events:none';
+  label.style.display = 'none';
   const input = document.createElement('input');
   input.type = 'checkbox';
   input.setAttribute('switch', '');
-  input.tabIndex = -1;
   label.append(input);
   document.body.append(label);
   return () => label.click();
@@ -261,9 +263,11 @@ for (const button of document.querySelectorAll('button[data-key]')) {
     event.preventDefault();
     stop();
     // Once per touch rather than per repeat, or a held button would buzz
-    haptic();
+    vibrate();
     press(180);
   });
+
+  button.addEventListener('touchend', switchTick);
 
   for (const type of ['pointerup', 'pointercancel', 'pointerleave']) {
     button.addEventListener(type, stop);
