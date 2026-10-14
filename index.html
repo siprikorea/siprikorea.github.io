@@ -31,11 +31,10 @@
     .card .go{font-size:13px;font-weight:700;color:#7aa1ff}
     .icon{width:40px;height:40px;border-radius:10px;margin-bottom:14px;overflow:hidden}
     .icon img{width:100%;height:100%;display:block}
-    /* Each app's own icon. Some are drawn with transparent margin around
-       the artwork, so they are scaled to fill the tile like the others. */
-    .icon.flow img{transform:scale(1.23)}
-    .icon.hexeditor img{transform:scale(1.24)}
-    .icon.stetris img{transform:scale(1.09)}
+    /* Card icons live in /icons/, one file per app named after its folder.
+       They are copies of each app's own icon, cropped to the artwork, so
+       every tile is filled the same way; refresh a copy when an app's icon
+       changes. The app folders keep their own files untouched. */
   </style>
 </head>
 <body>
@@ -44,40 +43,40 @@
     <p class="sub">Apps &amp; tools</p>
     <div class="cards">
       <a class="card" href="/flow/">
-        <div class="icon flow" aria-hidden="true">
-          <img src="/flow/appicon.png" alt="" width="40" height="40" decoding="async">
+        <div class="icon" aria-hidden="true">
+          <img src="/icons/flow.png" alt="" width="40" height="40" decoding="async">
         </div>
         <h2>Flow</h2>
         <p>Visual, node-based dataflow editor. Build data pipelines without code.</p>
         <span class="go">Learn more →</span>
       </a>
       <a class="card" href="/hexeditor/">
-        <div class="icon hexeditor" aria-hidden="true">
-          <img src="/hexeditor/apple-touch-icon.png" alt="" width="40" height="40" decoding="async">
+        <div class="icon" aria-hidden="true">
+          <img src="/icons/hexeditor.png" alt="" width="40" height="40" decoding="async">
         </div>
         <h2>Hex Editor</h2>
         <p>Binary file editor with 010-style templates that parse files into structures. Files stay on your device.</p>
         <span class="go">Open →</span>
       </a>
       <a class="card" href="/stetris/">
-        <div class="icon stetris" aria-hidden="true">
-          <img src="/stetris/icon.png" alt="" width="40" height="40" decoding="async">
+        <div class="icon" aria-hidden="true">
+          <img src="/icons/stetris.png" alt="" width="40" height="40" decoding="async">
         </div>
         <h2>Stetris</h2>
         <p>Tetris in the browser. The same game logic written four times over, in C++, Java, Python and JavaScript.</p>
         <span class="go">Play →</span>
       </a>
       <a class="card" href="/n-back/">
-        <div class="icon nback" aria-hidden="true">
-          <img src="/n-back/icon-192.png" alt="" width="40" height="40" decoding="async">
+        <div class="icon" aria-hidden="true">
+          <img src="/icons/n-back.png" alt="" width="40" height="40" decoding="async">
         </div>
         <h2>Dual N-Back</h2>
         <p>Brain training game to improve working memory.</p>
         <span class="go">Play →</span>
       </a>
       <a class="card" href="/catholic-chant/">
-        <div class="icon chant" aria-hidden="true">
-          <img src="/catholic-chant/icon.png" alt="" width="40" height="40" decoding="async">
+        <div class="icon" aria-hidden="true">
+          <img src="/icons/catholic-chant.png" alt="" width="40" height="40" decoding="async">
         </div>
         <h2>Catholic Chant</h2>
         <p>Catholic hymnal. Search by number or title, view sheet music and listen.</p>
