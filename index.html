@@ -28,9 +28,10 @@
     .card .go{font-size:13px;font-weight:700;color:#7aa1ff}
     .icon{width:40px;height:40px;border-radius:10px;margin-bottom:14px;overflow:hidden}
     .icon img{width:100%;height:100%;display:block}
-    /* Each app's own icon. Two are drawn with transparent margin around
-       the artwork, so they are scaled to fill the tile like the third. */
+    /* Each app's own icon. Some are drawn with transparent margin around
+       the artwork, so they are scaled to fill the tile like the others. */
     .icon.flow img{transform:scale(1.23)}
+    .icon.hexeditor img{transform:scale(1.24)}
     .icon.stetris img{transform:scale(1.09)}
   </style>
 </head>
@@ -46,6 +47,14 @@
         <h2>Flow</h2>
         <p>Visual, node-based dataflow editor. Build data pipelines without code.</p>
         <span class="go">Learn more →</span>
+      </a>
+      <a class="card" href="/hexeditor/">
+        <div class="icon hexeditor" aria-hidden="true">
+          <img src="/hexeditor/apple-touch-icon.png" alt="" width="40" height="40" decoding="async">
+        </div>
+        <h2>Hex Editor</h2>
+        <p>Binary file editor with 010-style templates that parse files into structures. Files stay on your device.</p>
+        <span class="go">Open →</span>
       </a>
       <a class="card" href="/stetris/">
         <div class="icon stetris" aria-hidden="true">
