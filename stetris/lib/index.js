@@ -1,5 +1,5 @@
 /**
- * Stetris game logic.
+ * S Tetris game logic.
  *
  * The package knows nothing about how the game is presented. A front end
  * calls the input methods, hands elapsed time to `Play.tick()` and reads the
